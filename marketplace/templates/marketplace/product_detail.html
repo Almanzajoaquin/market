@@ -1,0 +1,41 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+        </div>
+        <div class="col-md-6">
+            <h1>{{ product.name }}</h1>
+            <p class="text-muted">Periférico: {{ product.get_category_display }}</p>
+            <h2 class="text-primary">{{ product.get_price_in_pesos }}</h2>
+            <p>{{ product.description }}</p>
+            
+            {% if product.stock > 0 %}
+            <p class="text-success">✓ En stock: {{ product.stock }} unidades</p>
+            <form method="post" action="{% url 'add_to_cart' product.id %}" class="mt-4">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-4">
+                        <label for="quantity" class="form-label">Cantidad:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control">
+                    </div>
+                    <div class="col-8 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <p class="text-danger">✗ Periférico agotado</p>
+            {% endif %}
+            
+            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary mt-3">
+                ← Volver a Periféricos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

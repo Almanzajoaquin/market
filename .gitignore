@@ -1,0 +1,29 @@
+# Django
+*.pyc
+*__pycache__/
+db.sqlite3
+
+# Environment
+venv/
+.env
+.env.local
+
+# Media files (subidas de usuarios) - NO subir imágenes de productos
+media/
+
+# Static files (pueden ser regenerados)
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
