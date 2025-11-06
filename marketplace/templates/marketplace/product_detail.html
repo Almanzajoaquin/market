@@ -22,25 +22,25 @@
                             <div class="alert alert-success d-inline-block">
                                 <i class="bi bi-check-circle"></i> En stock - {{ product.stock }} unidades
                             </div>
-                            
-                            <form method="post" class="mt-3">
-                                {% csrf_token %}
-                                <div class="row g-3 align-items-center justify-content-center">
-                                    <div class="col-auto">
-                                        <label for="quantity" class="form-label fw-bold">Cantidad:</label>
+                                <form method="post" class="add-to-cart-form-detail">
+                                    {% csrf_token %}
+                                    <div class="row g-3 align-items-center justify-content-center">
+                                        <div class="col-auto">
+                                            <label for="quantity" class="form-label fw-bold">Cantidad:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="number" id="quantity" name="quantity" 
+                                                value="1" min="1" max="{{ product.stock }}" 
+                                                class="form-control" style="width: 80px;">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="button" class="btn btn-primary btn-lg add-to-cart-btn-detail" 
+                                                    data-product-id="{{ product.id }}">
+                                                <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <input type="number" id="quantity" name="quantity" 
-                                               value="1" min="1" max="{{ product.stock }}" 
-                                               class="form-control" style="width: 80px;">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
                         {% else %}
                             <div class="alert alert-danger">
                                 <i class="bi bi-x-circle"></i> Producto agotado

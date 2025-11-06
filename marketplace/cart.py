@@ -12,6 +12,7 @@ class Cart:
 
     def add(self, product, quantity=1, update_quantity=False):
         product_id = str(product.id)
+        
         if product_id not in self.cart:
             self.cart[product_id] = {
                 'quantity': 0,
@@ -19,9 +20,18 @@ class Cart:
             }
         
         if update_quantity:
-            self.cart[product_id]['quantity'] = quantity
+            # Validar que no exceda el stock al actualizar
+            if quantity <= product.stock:
+                self.cart[product_id]['quantity'] = quantity
+            else:
+                self.cart[product_id]['quantity'] = product.stock
         else:
-            self.cart[product_id]['quantity'] += quantity
+            # Validar que no exceda el stock al agregar
+            new_quantity = self.cart[product_id]['quantity'] + quantity
+            if new_quantity <= product.stock:
+                self.cart[product_id]['quantity'] = new_quantity
+            else:
+                self.cart[product_id]['quantity'] = product.stock
         
         self.save()
 
@@ -57,3 +67,9 @@ class Cart:
     def clear(self):
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
+
+    def get_available_quantity(self, product):
+        """Obtener la cantidad máxima que se puede agregar considerando el stock"""
+        product_id = str(product.id)
+        current_quantity = self.cart.get(product_id, {}).get('quantity', 0)
+        return max(0, product.stock - current_quantity)
