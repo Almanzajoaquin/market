@@ -1,0 +1,117 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<!-- Hero Section Contacto -->
+<section class="hero-contacto">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mb-3">📞 CONTACTO</h1>
+                <p class="lead">Estamos aquí para ayudarte. ¡Contáctanos!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Información de Contacto -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mb-5">
+                <h2 class="section-title">Envíanos un Mensaje</h2>
+                
+                <form method="post" class="contact-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre completo *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="asunto" class="form-label">Asunto</label>
+                        <input type="text" class="form-control" id="asunto" name="asunto">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="mensaje" class="form-label">Mensaje *</label>
+                        <textarea class="form-control" id="mensaje" name="mensaje" rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="contact-info-card">
+                    <h3 class="mb-4">Información de Contacto</h3>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Dirección</h5>
+                            <p>Buenos Aires, Argentina</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Teléfono</h5>
+                            <p>+54 11 1234-5678</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Email</h5>
+                            <p>info@masivotech.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h5>Horario de Atención</h5>
+                            <p>Lunes a Viernes: 9:00 - 18:00<br>
+                               Sábados: 9:00 - 13:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mapa -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title">¿Dónde Estamos?</h2>
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Mapa de ubicación</p>
+                    <small class="text-muted">(Integración con Google Maps disponible)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

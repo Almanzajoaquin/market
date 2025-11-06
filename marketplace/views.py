@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
 from django.contrib import messages
 from .models import Product, Order, OrderItem
 from .forms import OrderForm
@@ -29,7 +28,29 @@ def product_list(request):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id, available=True)
+    
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        cart = Cart(request)
+        cart.add(product, quantity)
+        messages.success(request, f'¡{quantity} x {product.name} agregado al carrito!')
+        return redirect('product_detail', product_id=product_id)
+    
     return render(request, 'marketplace/product_detail.html', {'product': product})
+
+def ofertas(request):
+    productos_oferta = Product.objects.filter(available=True).order_by('-created_at')[:8]
+    return render(request, 'marketplace/ofertas.html', {
+        'productos_oferta': productos_oferta,
+        'categories': Product.CATEGORY_CHOICES
+    })
+
+def contacto(request):
+    if request.method == 'POST':
+        messages.success(request, '¡Mensaje enviado correctamente! Te contactaremos pronto.')
+        return redirect('contacto')
+    
+    return render(request, 'marketplace/contacto.html')
 
 def cart_detail(request):
     cart = Cart(request)
@@ -42,11 +63,7 @@ def add_to_cart(request, product_id):
     
     cart.add(product, quantity)
     messages.success(request, f'"{product.name}" agregado al carrito.')
-    
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'success': True, 'cart_total': len(cart)})
-    
-    return redirect('cart_detail')
+    return redirect('product_detail', product_id=product_id)
 
 def remove_from_cart(request, product_id):
     cart = Cart(request)

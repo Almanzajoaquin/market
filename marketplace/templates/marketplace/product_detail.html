@@ -3,38 +3,134 @@
 {% block content %}
 <div class="container my-5">
     <div class="row">
+        <!-- Columna de imagen y compra -->
         <div class="col-md-6">
-            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
-        </div>
-        <div class="col-md-6">
-            <h1>{{ product.name }}</h1>
-            <p class="text-muted">Periférico: {{ product.get_category_display }}</p>
-            <h2 class="text-primary">{{ product.get_price_in_pesos }}</h2>
-            <p>{{ product.description }}</p>
-            
-            {% if product.stock > 0 %}
-            <p class="text-success">✓ En stock: {{ product.stock }} unidades</p>
-            <form method="post" action="{% url 'add_to_cart' product.id %}" class="mt-4">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-4">
-                        <label for="quantity" class="form-label">Cantidad:</label>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control">
-                    </div>
-                    <div class="col-8 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
-                        </button>
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 400px;">
+                    {% else %}
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <span class="text-muted">Imagen no disponible</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <h2 class="text-primary">{{ product.get_price_in_pesos }}</h2>
+                        
+                        {% if product.stock > 0 %}
+                            <div class="alert alert-success d-inline-block">
+                                <i class="bi bi-check-circle"></i> En stock - {{ product.stock }} unidades
+                            </div>
+                            
+                            <form method="post" class="mt-3">
+                                {% csrf_token %}
+                                <div class="row g-3 align-items-center justify-content-center">
+                                    <div class="col-auto">
+                                        <label for="quantity" class="form-label fw-bold">Cantidad:</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="number" id="quantity" name="quantity" 
+                                               value="1" min="1" max="{{ product.stock }}" 
+                                               class="form-control" style="width: 80px;">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-danger">
+                                <i class="bi bi-x-circle"></i> Producto agotado
+                            </div>
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                No disponible
+                            </button>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'product_list' %}?category={{ product.category }}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left"></i> Ver más {{ product.get_category_display }}
+                                </a>
+                                <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-grid"></i> Todos los productos
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </form>
-            {% else %}
-            <p class="text-danger">✗ Periférico agotado</p>
-            {% endif %}
-            
-            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary mt-3">
-                ← Volver a Periféricos
-            </a>
+            </div>
+        </div>
+        
+        <!-- Columna de información del producto -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <nav aria-label="breadcrumb" class="mb-3">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Inicio</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Productos</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'product_list' %}?category={{ product.category }}">{{ product.get_category_display }}</a></li>
+                            <li class="breadcrumb-item active">{{ product.name }}</li>
+                        </ol>
+                    </nav>
+                    
+                    <h1 class="h2">{{ product.name }}</h1>
+                    <div class="mb-3">
+                        <span class="badge bg-primary fs-6">{{ product.get_category_display }}</span>
+                    </div>
+                    
+                    <div class="product-features mb-4">
+                        <h4 class="h5">Características principales:</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Envío gratis</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Garantía 12 meses</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Stock disponible</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Entrega en 24h</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-description">
+                        <h4 class="h5">Descripción del producto:</h4>
+                        <div class="description-content" style="white-space: pre-line;">
+                            {{ product.description }}
+                        </div>
+                    </div>
+                    
+                    {% if product.category == 'mouses' %}
+                    <div class="mt-4">
+                        <h5 class="h6">Especificaciones técnicas:</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Sensor:</strong> Óptico gaming</li>
+                            <li><strong>DPI:</strong> Hasta 8,000</li>
+                            <li><strong>Botones:</strong> 6 programables</li>
+                            <li><strong>Iluminación:</strong> RGB LIGHTSYNC</li>
+                            <li><strong>Conexión:</strong> USB</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

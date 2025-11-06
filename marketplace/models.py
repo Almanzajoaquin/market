@@ -8,8 +8,6 @@ class Product(models.Model):
         ('mouses', 'Mouses'),
         ('auriculares', 'Auriculares'),
         ('monitores', 'Monitores'),
-        ('sillas', 'Sillas Gamer'),
-        ('otros', 'Otros Periféricos'),
     ]
     
     name = models.CharField(max_length=200)
@@ -58,3 +56,25 @@ class OrderItem(models.Model):
     
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+
+
+# Al final del archivo, puedes agregar esto para crear un producto de ejemplo
+def create_sample_products():
+    """Crear productos de ejemplo si no existen"""
+    if not Product.objects.filter(name="Logitech G203 Lightsync").exists():
+        Product.objects.create(
+            name="Logitech G203 Lightsync",
+            description="""El mouse gaming Logitech G203 Lightsync ofrece colores LIGHTSYNC RGB brillantes, 
+            un sensor gaming y un diseño clásico con 6 botones. Experimenta un rendimiento gaming confiable 
+            y una gran precisión con hasta 8,000 DPI.\n\n
+            • Sensor gaming para seguimiento preciso\n
+            • Iluminación LIGHTSYNC RGB personalizable\n  
+            • 6 botones programables\n
+            • Hasta 8,000 DPI\n
+            • Diseño clásico y cómodo""",
+            price=18999,
+            category="mouses",
+            stock=25,
+            available=True,
+            image="products/g203.jpg"  # Necesitarás subir esta imagen
+        )
