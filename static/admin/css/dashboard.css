@@ -1,0 +1,37 @@
+/* Mejoras visuales para el admin */
+#header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.dashboard .module table th {
+    width: 100%;
+}
+
+.dashboard .module table td {
+    white-space: nowrap;
+}
+
+.object-tools {
+    margin-top: 0;
+}
+
+.object-tools li {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.object-tools a {
+    background: #667eea;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-weight: 600;
+}
+
+.object-tools a:hover {
+    background: #764ba2;
+    transform: translateY(-2px);
+}

@@ -7,9 +7,17 @@ urlpatterns = [
     path('producto/<int:product_id>/', views.product_detail, name='product_detail'),
     path('ofertas/', views.ofertas, name='ofertas'),
     path('contacto/', views.contacto, name='contacto'),
+    
+    # Carrito
     path('carrito/', views.cart_detail, name='cart_detail'),
     path('carrito/agregar/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('carrito/remover/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('carrito/actualizar/<int:product_id>/', views.update_cart, name='update_cart'),
+    path('carrito/vaciar/', views.clear_cart, name='clear_cart'),
+    
+    # Checkout
     path('checkout/', views.checkout, name='checkout'),
+    
+    # API
+    path('buscar/autocomplete/', views.search_autocomplete, name='search_autocomplete'),
 ]

@@ -73,7 +73,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 LANGUAGE_CODE = 'es-ar'
 TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
@@ -95,3 +94,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # Carrito
 CART_SESSION_ID = 'cart'
+
+# Agregar al final de settings.py
+ADMIN_DASHBOARD = True
+
+# Configuración de templates del admin
+if ADMIN_DASHBOARD:
+    import os
+    TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'templates')]
