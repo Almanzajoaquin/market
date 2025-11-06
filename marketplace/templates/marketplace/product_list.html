@@ -3,66 +3,266 @@
 {% block content %}
 <section class="py-5">
     <div class="container">
+        <!-- Header Mejorado con Resultados de Búsqueda -->
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="section-title">
-                    {% if selected_category %}
+                    {% if search_query %}
+                        🔍 Resultados para "{{ search_query }}"
+                    {% elif selected_category %}
                         {{ selected_category|title }}
                     {% else %}
-                        TODOS LOS PRODUCTOS
+                        🎮 TODOS LOS PRODUCTOS
                     {% endif %}
                 </h1>
+                
+                {% if search_query %}
+                <p class="text-center text-muted">
+                    Encontrados {{ products.count }} producto{{ products.count|pluralize }}
+                    {% if selected_category %}en {{ selected_category }}{% endif %}
+                </p>
+                {% endif %}
             </div>
         </div>
 
+        <!-- Controles de Búsqueda y Filtros Mejorados -->
+        <div class="sorting-container">
+            <div class="sorting-header">
+                <h3 class="sorting-title">
+                    <i class="fas fa-sort-amount-down"></i>
+                    Ordenar y Filtrar
+                </h3>
+                
+                <div class="sorting-controls">
+                    <!-- Dropdown de Ordenamiento Mejorado -->
+                    <div class="sort-dropdown">
+                        <button class="sort-dropdown-toggle" id="sortDropdown">
+                            <span>
+                                {% if sort_by == 'name' %} Por Nombre
+                                {% elif sort_by == 'price_low' %} Precio: Menor a Mayor
+                                {% elif sort_by == 'price_high' %} Precio: Mayor a Menor
+                                {% elif sort_by == 'newest' %} Más Nuevos
+                                {% else %} Ordenar por...
+                                {% endif %}
+                            </span>
+                        </button>
+                        <div class="sort-dropdown-menu">
+                            <button class="sort-option {% if sort_by == 'name' %}active{% endif %}" data-sort="name">
+                                <i class="fas fa-sort-alpha-down"></i>
+                                 Por Nombre
+                            </button>
+                            <button class="sort-option {% if sort_by == 'price_low' %}active{% endif %}" data-sort="price_low">
+                                <i class="fas fa-sort-numeric-down"></i>
+                                 Precio: Menor a Mayor
+                            </button>
+                            <button class="sort-option {% if sort_by == 'price_high' %}active{% endif %}" data-sort="price_high">
+                                <i class="fas fa-sort-numeric-down-alt"></i>
+                                 Precio: Mayor a Menor
+                            </button>
+                            <button class="sort-option {% if sort_by == 'newest' %}active{% endif %}" data-sort="newest">
+                                <i class="fas fa-clock"></i>
+                                 Más Nuevos Primero
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Badges de Ordenamiento Actual -->
+                    <div class="sort-badges">
+                        <div class="sort-badge {% if sort_by == 'name' %}active{% endif %}">
+                            <i class="fas fa-font"></i> Nombre
+                            {% if sort_by == 'name' %}
+                            <button class="remove" data-sort-remove="name">×</button>
+                            {% endif %}
+                        </div>
+                        <div class="sort-badge {% if sort_by == 'price_low' %}active{% endif %}">
+                            <i class="fas fa-arrow-up"></i> Precio
+                            {% if sort_by == 'price_low' %}
+                            <button class="remove" data-sort-remove="price_low">×</button>
+                            {% endif %}
+                        </div>
+                        <div class="sort-badge {% if sort_by == 'price_high' %}active{% endif %}">
+                            <i class="fas fa-arrow-down"></i> Precio
+                            {% if sort_by == 'price_high' %}
+                            <button class="remove" data-sort-remove="price_high">×</button>
+                            {% endif %}
+                        </div>
+                        <div class="sort-badge {% if sort_by == 'newest' %}active{% endif %}">
+                            <i class="fas fa-star"></i> Nuevos
+                            {% if sort_by == 'newest' %}
+                            <button class="remove" data-sort-remove="newest">×</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Contador de Resultados -->
+                    <div class="results-count">
+                        <i class="fas fa-cube"></i>
+                        {{ products.count }} producto{{ products.count|pluralize }} encontrado{{ products.count|pluralize }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filtros Activos -->
+            {% if search_query or selected_category %}
+            <div class="active-filters">
+                {% if search_query %}
+                <div class="filter-tag">
+                    <i class="fas fa-search"></i>
+                    "{{ search_query }}"
+                    <a href="{% url 'product_list' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" class="remove">×</a>
+                </div>
+                {% endif %}
+                {% if selected_category %}
+                <div class="filter-tag">
+                    <i class="fas fa-folder"></i>
+                    {{ selected_category|title }}
+                    <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="remove">×</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
         <div class="row">
+            <!-- Sidebar de Categorías -->
             <div class="col-md-3 mb-4">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Categorías</h5>
+                        <h5 class="mb-0"><i class="fas fa-tags me-2"></i>CATEGORÍAS</h5>
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'product_list' %}" 
+                        <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}{% elif sort_by != 'name' %}?sort={{ sort_by }}{% endif %}" 
                            class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
-                            Todas las categorías
+                            <i class="fas fa-th-large me-2"></i> Todas las categorías
                         </a>
                         {% for value, label in categories %}
-                        <a href="{% url 'product_list' %}?category={{ value }}" 
+                        <a href="{% url 'product_list' %}?category={{ value }}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" 
                            class="list-group-item list-group-item-action {% if selected_category == value %}active{% endif %}">
+                            {% if value == 'teclados' %}
+                            {% elif value == 'mouses' %}
+                            {% elif value == 'auriculares' %}
+                            {% elif value == 'monitores' %}
+                            {% endif %}
                             {{ label }}
                         </a>
                         {% endfor %}
                     </div>
                 </div>
+
+                <!-- Información de Filtros -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6><i class="fas fa-info-circle me-2"></i>Filtros Activos</h6>
+                        {% if search_query %}
+                        <div class="d-flex align-items-center justify-content-between mt-2 p-2 bg-light rounded">
+                            <small>
+                                <i class="fas fa-search text-primary"></i>
+                                <strong>"{{ search_query }}"</strong>
+                            </small>
+                            <a href="{% url 'product_list' %}{% if selected_category %}?category={{ selected_category }}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}{% elif sort_by != 'name' %}?sort={{ sort_by }}{% endif %}" 
+                               class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if selected_category %}
+                        <div class="d-flex align-items-center justify-content-between mt-2 p-2 bg-light rounded">
+                            <small>
+                                <i class="fas fa-folder text-success"></i>
+                                <strong>{{ selected_category|title }}</strong>
+                            </small>
+                            <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}{% elif sort_by != 'name' %}?sort={{ sort_by }}{% endif %}" 
+                               class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if not search_query and not selected_category %}
+                        <small class="text-muted">No hay filtros activos</small>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h6>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'ofertas' %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-fire me-1"></i>Ver Ofertas
+                            </a>
+                            <a href="{% url 'product_list' %}?sort=newest" class="btn btn-info btn-sm">
+                                <i class="fas fa-star me-1"></i>Novedades
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             
+            <!-- Productos -->
             <div class="col-md-9">
-                <div class="row">
-                    {% for product in products %}
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="product-card" onclick="window.location.href='{% url 'product_detail' product.id %}'" style="cursor: pointer;">
-                            <div class="product-image">
-                                {% if product.image %}
-                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                                {% else %}
-                                    <i class="fas fa-image fa-3x text-muted"></i>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="product-info">
-                                <div class="product-category">{{ product.get_category_display }}</div>
-                                <h3 class="product-title">{{ product.name }}</h3>
-                                <div class="product-price">{{ product.get_price_in_pesos }}</div>
+                {% if products %}
+                <div class="products-grid">
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="product-card" data-product-id="{{ product.id }}">
+                                <!-- Enlace para ver detalles -->
+                                <a href="{% url 'product_detail' product.id %}" class="product-link">
+                                    <div class="product-image">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                                        {% else %}
+                                            <div class="no-image-placeholder">
+                                                <i class="fas fa-image fa-3x text-muted"></i>
+                                                <small class="text-muted">Imagen no disponible</small>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <!-- Alertas de stock como texto -->
+                                        {% if product.stock <= 0 %}
+                                        <div class="stock-alert out-of-stock">
+                                            <i class="fas fa-ban"></i>
+                                            <span>AGOTADO</span>
+                                        </div>
+                                        {% elif product.stock < 5 %}
+                                        <div class="stock-alert low-stock">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>POCO STOCK</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">{{ product.name }}</h3>
+                                            
+                                            <!-- 🚨 ELIMINA ESTAS 3 LÍNEAS - LA DESCRIPCIÓN -->
+                                            <!-- <div class="product-description">
+                                                {{ product.description|truncatewords:15 }}
+                                            </div> -->
+                                            
+                                            <div class="product-price">{{ product.get_price_in_pesos }}</div>
+                                            <div class="product-meta">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-box me-1"></i>
+                                                    {% if product.stock > 10 %}
+                                                    <span class="text-success">En stock</span>
+                                                    {% elif product.stock > 0 %}
+                                                    <span class="text-warning">{{ product.stock }} disponibles</span>
+                                                    {% else %}
+                                                    <span class="text-danger">Agotado</span>
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                </a>
                                 
+                                <!-- Botón Agregar con AJAX -->
                                 <div class="product-actions">
                                     {% if product.stock > 0 %}
-                                    <form method="post" action="{% url 'add_to_cart' product.id %}" onclick="event.stopPropagation()">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="fas fa-shopping-cart me-2"></i>Agregar
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-primary w-100 add-to-cart-btn" 
+                                            data-product-id="{{ product.id }}">
+                                        <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                    </button>
                                     {% else %}
                                     <button class="btn btn-secondary w-100" disabled>
                                         <i class="fas fa-times me-2"></i>AGOTADO
@@ -71,20 +271,69 @@
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="col-12 text-center">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            No hay productos disponibles en esta categoría.
-                        </div>
-                        <a href="{% url 'product_list' %}" class="btn btn-primary">Ver Todos los Productos</a>
-                    </div>
-                    {% endfor %}
                 </div>
+
+                <!-- Paginación (opcional para el futuro) -->
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <div class="d-inline-flex gap-2 align-items-center">
+                            <span class="text-muted">Mostrando {{ products.count }} de {{ products.count }} productos</span>
+                            {% if products.count >= 12 %}
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Estado cuando no hay resultados -->
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                        <h3>No se encontraron productos</h3>
+                        <p class="text-muted mb-4">
+                            {% if search_query %}
+                            No hay resultados para "{{ search_query }}"
+                            {% elif selected_category %}
+                            No hay productos en la categoría "{{ selected_category }}"
+                            {% else %}
+                            No hay productos disponibles en este momento.
+                            {% endif %}
+                        </p>
+                        <div class="d-flex gap-2 justify-content-center flex-wrap">
+                            {% if search_query or selected_category %}
+                            <a href="{% url 'product_list' %}{% if sort_by != 'name' %}?sort={{ sort_by }}{% endif %}" class="btn btn-primary">
+                                <i class="fas fa-times me-2"></i>Limpiar Filtros
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'ofertas' %}" class="btn btn-warning">
+                                <i class="fas fa-fire me-2"></i>Ver Ofertas
+                            </a>
+                            <a href="{% url 'product_list' %}?sort=newest" class="btn btn-info">
+                                <i class="fas fa-star me-2"></i>Ver Novedades
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
 
+{% block extra_css %}
 {% endblock %}
