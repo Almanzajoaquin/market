@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, ShippingOption, ShippingZone
 from django.urls import path
 from django.shortcuts import redirect
 from .admin_dashboard import admin_dashboard
@@ -31,52 +31,6 @@ class ProductAdmin(admin.ModelAdmin):
     def category_display(self, obj):
         return dict(Product.CATEGORY_CHOICES).get(obj.category, obj.category)
     category_display.short_description = 'Categoría'
-
-class OrderItemInline(admin.TabularInline):
-    model = OrderItem
-    readonly_fields = ['product', 'quantity', 'price']
-    extra = 0
-    can_delete = False
-
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'total_amount', 'status', 'created_at']
-    list_filter = ['status', 'created_at']
-    search_fields = ['first_name', 'last_name', 'email']
-    readonly_fields = ['created_at', 'total_amount']
-    inlines = [OrderItemInline]
-
-admin.site.register(Product, ProductAdmin)
-admin.site.register(Order, OrderAdmin)
-
-class MasivoTechAdminSite(admin.AdminSite):
-    site_header = "🎮 MasivoTech Admin"
-    site_title = "MasivoTech Administration"
-    index_title = "Dashboard Principal"
-    
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('dashboard/', self.admin_view(admin_dashboard), name='admin_dashboard'),
-        ]
-        return custom_urls + urls
-    
-    def index(self, request, extra_context=None):
-        # Redirigir al dashboard personalizado por defecto
-        return redirect('admin:admin_dashboard')
-
-# Reemplazar el admin site por defecto
-admin_site = MasivoTechAdminSite()
-
-# Re-registrar los modelos con el admin site personalizado
-admin_site.register(Product, ProductAdmin)
-admin_site.register(Order, OrderAdmin)
-
-# Reemplazar el admin por defecto
-admin.site = admin_site
-site = admin.site
-
-class ProductAdmin(admin.ModelAdmin):
-    # ... código existente ...
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -100,14 +54,39 @@ class ProductAdmin(admin.ModelAdmin):
             return format_html('<span style="color: green;">🟢 EN STOCK ({})</span>', obj.stock)
     stock_status.short_description = 'Estado Stock'
 
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    readonly_fields = ['product', 'quantity', 'price']
+    extra = 0
+    can_delete = False
+
 class OrderAdmin(admin.ModelAdmin):
-    # ... código existente ...
+    list_display = ['id', 'first_name', 'last_name', 'email', 'total_amount', 'status', 'created_at', 'order_actions']
+    list_filter = ['status', 'created_at']
+    search_fields = ['first_name', 'last_name', 'email']
+    readonly_fields = ['created_at', 'total_amount']
+    inlines = [OrderItemInline]
     
     def order_actions(self, obj):
         return format_html('''
             <div class="order-actions">
-                <a href="/admin/marketplace/order/{}/change/" class="btn btn-sm btn-info">📝 Editar</a>
-                <a href="/admin/marketplace/order/{}/delete/" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
+                <a href="/admin/marketplace/order/{}/change/" class="button">📝 Editar</a>
             </div>
-        ''', obj.id, obj.id)
+        ''', obj.id)
     order_actions.short_description = 'Acciones'
+
+@admin.register(ShippingOption)
+class ShippingOptionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price', 'estimated_days', 'is_active']
+    list_filter = ['is_active']
+    list_editable = ['price', 'estimated_days', 'is_active']
+
+@admin.register(ShippingZone)
+class ShippingZoneAdmin(admin.ModelAdmin):
+    list_display = ['name', 'postal_code_start', 'postal_code_end', 'shipping_option']
+    list_filter = ['shipping_option']
+
+# Registrar todos los modelos
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Order, OrderAdmin)
+# ShippingOption y ShippingZone ya están registrados con @admin.register

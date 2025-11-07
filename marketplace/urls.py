@@ -14,9 +14,14 @@ urlpatterns = [
     path('carrito/remover/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('carrito/actualizar/<int:product_id>/', views.update_cart, name='update_cart'),
     path('carrito/vaciar/', views.clear_cart, name='clear_cart'),
+    path('carrito/calcular-envio/', views.calculate_shipping, name='calculate_shipping'),
+    
     # Checkout
     path('checkout/', views.checkout, name='checkout'),
     
     # API
     path('buscar/autocomplete/', views.search_autocomplete, name='search_autocomplete'),
+    
+    # NUEVA: Página de información de envíos
+    path('envios/', views.envios_info, name='envios_info'),
 ]

@@ -57,24 +57,24 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
 
+# ELIMINA completamente la función create_sample_products que está mal
+# Y AGREGA estos modelos NUEVOS:
 
-# Al final del archivo, puedes agregar esto para crear un producto de ejemplo
-def create_sample_products():
-    """Crear productos de ejemplo si no existen"""
-    if not Product.objects.filter(name="Logitech G203 Lightsync").exists():
-        Product.objects.create(
-            name="Logitech G203 Lightsync",
-            description="""El mouse gaming Logitech G203 Lightsync ofrece colores LIGHTSYNC RGB brillantes, 
-            un sensor gaming y un diseño clásico con 6 botones. Experimenta un rendimiento gaming confiable 
-            y una gran precisión con hasta 8,000 DPI.\n\n
-            • Sensor gaming para seguimiento preciso\n
-            • Iluminación LIGHTSYNC RGB personalizable\n  
-            • 6 botones programables\n
-            • Hasta 8,000 DPI\n
-            • Diseño clásico y cómodo""",
-            price=18999,
-            category="mouses",
-            stock=25,
-            available=True,
-            image="products/g203.jpg"  # Necesitarás subir esta imagen
-        )
+class ShippingOption(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nombre del envío")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
+    estimated_days = models.CharField(max_length=50, verbose_name="Días estimados")
+    description = models.TextField(blank=True, verbose_name="Descripción")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
+    
+    def __str__(self):
+        return f"{self.name} - ${self.price}"
+
+class ShippingZone(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Zona")
+    postal_code_start = models.CharField(max_length=10, verbose_name="Código postal inicio")
+    postal_code_end = models.CharField(max_length=10, verbose_name="Código postal fin")
+    shipping_option = models.ForeignKey(ShippingOption, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.name} ({self.postal_code_start}-{self.postal_code_end})"

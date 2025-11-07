@@ -94,8 +94,43 @@
                         {% endfor %}
                     </div>
                     <hr>
+
+                    <!-- SECCIÓN DE CÁLCULO DE ENVÍO - AGREGADO -->
+                    <div class="shipping-section mb-3">
+                        <h6 class="mb-3">🚚 Calcular envío</h6>
+                        
+                        <form method="post" action="{% url 'calculate_shipping' %}" id="shipping-form">
+                            {% csrf_token %}
+                            <div class="input-group mb-2">
+                                <input type="text" name="postal_code" 
+                                    placeholder="Código postal (ej: 1425)" 
+                                    pattern="[0-9]{4}" title="4 dígitos" required
+                                    value="{{ postal_code }}"
+                                    class="form-control form-control-sm">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Calcular
+                                </button>
+                            </div>
+                        </form>
+                        
+                        {% if shipping_price > 0 %}
+                        <div class="shipping-result mt-3 p-3 bg-light rounded">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>📮 Envío a {{ postal_code }}:</span>
+                                <span>${{ shipping_price }}</span>
+                            </div>
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>💰 Total con envío:</span>
+                                <span class="text-success">${{ total_with_shipping }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- FIN SECCIÓN ENVÍO -->
+
                     <div class="d-flex justify-content-between fw-bold fs-5">
-                        <span>Total:</span>
+                        <span>Total productos:</span>
                         <span class="text-primary">${{ cart.get_total_price }}</span>
                     </div>
                     
@@ -137,4 +172,3 @@
     {% endif %}
 </div>
 {% endblock %}
-

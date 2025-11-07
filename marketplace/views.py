@@ -7,6 +7,7 @@ from .forms import OrderForm, ContactForm
 from .cart import Cart
 from django.http import HttpResponse
 from django.utils import timezone
+from decimal import Decimal
 
 def index(request):
     """Página de inicio"""
@@ -97,7 +98,7 @@ def contacto(request):
     return render(request, 'marketplace/contacto.html', {'form': form})
 
 def cart_detail(request):
-    """Página del carrito de compras"""
+    """Página del carrito de compras con cálculo de envío"""
     cart = Cart(request)
     
     # Verificar si hay productos que exceden el stock
@@ -107,10 +108,20 @@ def cart_detail(request):
             cart_has_exceeded_stock = True
             break
     
-    return render(request, 'marketplace/cart.html', {
+    # Obtener envío de la sesión
+    shipping_price = request.session.get('shipping_price', 0)
+    postal_code = request.session.get('postal_code', '')
+    total_with_shipping = cart.get_total_price() + Decimal(str(shipping_price))
+    
+    context = {
         'cart': cart,
-        'cart_has_exceeded_stock': cart_has_exceeded_stock
-    })
+        'cart_has_exceeded_stock': cart_has_exceeded_stock,
+        'shipping_price': shipping_price,
+        'postal_code': postal_code,
+        'total_with_shipping': total_with_shipping,
+    }
+    
+    return render(request, 'marketplace/cart.html', context)
 
 def add_to_cart(request, product_id):
     """Agregar producto al carrito (soporta AJAX)"""
@@ -308,3 +319,55 @@ def search_autocomplete(request):
         })
     
     return JsonResponse({'results': results})
+
+def calculate_shipping(request):
+    """Calcular costo de envío basado en código postal"""
+    if request.method == 'POST':
+        postal_code = request.POST.get('postal_code')
+        print(f"🔍 DEBUG: Código postal recibido: '{postal_code}'")
+        
+        shipping_price = 0
+        
+        # Lógica simple de cálculo
+        if postal_code:
+            if postal_code.startswith(('1', '2')):  # CABA
+                shipping_price = 1500
+                print("🔍 DEBUG: Zona CABA - $1500")
+            elif postal_code.startswith(('16', '17')):  # GBA
+                shipping_price = 2000
+                print("🔍 DEBUG: Zona GBA - $2000")
+            else:  # Resto del país
+                shipping_price = 3500
+                print("🔍 DEBUG: Zona resto del país - $3500")
+        else:
+            print("🔍 DEBUG: No se recibió código postal")
+        
+        print(f"🔍 DEBUG: Precio de envío calculado: ${shipping_price}")
+        
+        # Guardar en sesión
+        request.session['shipping_price'] = float(shipping_price)
+        request.session['postal_code'] = postal_code
+        
+        print(f"🔍 DEBUG: Redirigiendo a cart_detail...")
+        return redirect('cart_detail')
+    
+    return redirect('cart_detail')
+
+def shipping_info(request):
+    """Página de información de envíos"""
+    return render(request, 'marketplace/shipping_info.html')
+
+def envios_info(request):
+    """Página de información de envíos"""
+    # Precios de envío para mostrar en la página
+    shipping_zones = [
+        {'zona': 'CABA', 'precio': '$1.500', 'tiempo': '24-48 horas', 'ejemplos': '1001, 1425, 1876'},
+        {'zona': 'GBA', 'precio': '$2.000', 'tiempo': '48-72 horas', 'ejemplos': '1600, 1700, 1754'},
+        {'zona': 'Interior del país', 'precio': '$3.500', 'tiempo': '5-7 días', 'ejemplos': '5000, 8000, 9400'},
+    ]
+    
+    context = {
+        'shipping_zones': shipping_zones
+    }
+    
+    return render(request, 'marketplace/envios_info.html', context)

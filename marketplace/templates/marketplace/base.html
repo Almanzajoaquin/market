@@ -48,8 +48,8 @@
                 <div class="navbar-search">
                     <form class="d-flex" method="GET" action="{% url 'product_list' %}">
                         <input class="form-control" type="search" name="q" 
-                               placeholder="Buscar productos..." value="{{ request.GET.q }}"
-                               aria-label="Buscar productos">
+                            placeholder="Buscar productos..." value="{{ request.GET.q }}"
+                            aria-label="Buscar productos">
                         <button class="btn btn-search" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -162,7 +162,7 @@
                         <!-- AGREGADO: CHAT DE SOPORTE EN EL FOOTER -->
                         <li><a href="{% url 'chat' %}">Chat de Soporte</a></li>
                         <li><a href="{% url 'contacto' %}">Contacto</a></li>
-                        <li><a href="#">Envíos</a></li>
+                        <li><a href="{% url 'envios_info' %}">Envíos</a></li>
                         <li><a href="#">Cambios</a></li>
                         <li><a href="#">FAQ</a></li>
                     </ul>
