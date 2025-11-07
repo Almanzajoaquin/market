@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'marketplace',
     'crispy_forms',
     'crispy_bootstrap5',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -102,3 +103,5 @@ ADMIN_DASHBOARD = True
 if ADMIN_DASHBOARD:
     import os
     TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'templates')]
+
+GEMINI_API_KEY = 'AIzaSyA8IGzH6smTA9VK7WSxFkcUxSlAasd825E'

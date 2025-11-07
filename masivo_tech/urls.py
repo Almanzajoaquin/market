@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('marketplace.urls')),
+    path('soporte/', include('chat.urls')),
 ]
 
 if settings.DEBUG:

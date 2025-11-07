@@ -1,0 +1,330 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header del Chat -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="chat-avatar me-3">
+                            <i class="fas fa-robot fa-2x"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Masibot 🤖</h4>
+                            <small class="opacity-75">Asistente IA de Masivo Tech</small>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-{% if gemini_available %}success{% else %}warning{% endif %}">
+                                <i class="fas fa-circle me-1"></i>
+                                {% if gemini_available %}IA Conectada{% else %}Modo Básico{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Área de Mensajes -->
+                <div class="card-body p-0">
+                    <div id="chat-messages" class="chat-messages p-3">
+                        <!-- Mensaje de bienvenida -->
+                        <div class="chat-message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-text">
+                                    <strong>¡Hola! Soy Masibot 🎮</strong><br>
+                                    Tu asistente de IA de <strong>Masivo Tech</strong>. 
+                                    {% if gemini_available %}
+                                    Estoy aquí para ayudarte con cualquier consulta sobre periféricos gaming! 🤖
+                                    {% else %}
+                                    Puedo ayudarte con información de productos, envíos y garantías! 📦
+                                    {% endif %}
+                                </div>
+                                <div class="message-time">Ahora</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Input de Mensaje -->
+                    <div class="chat-input-container p-3 border-top">
+                        <form id="chat-form" class="d-flex gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" id="session-id" value="{{ session_id }}">
+                            <input type="text" id="message-input" class="form-control" 
+                                   placeholder="Escribe tu mensaje..." autocomplete="off" required
+                                   {% if not gemini_available %}disabled{% endif %}>
+                            <button type="submit" class="btn btn-primary px-4" {% if not gemini_available %}disabled{% endif %}>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                        
+                        <!-- Preguntas Rápidas -->
+                        <div class="quick-questions mt-3">
+                            <small class="text-muted d-block mb-2">Preguntas frecuentes:</small>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-outline-primary btn-sm quick-question" data-question="Qué teclados gaming tienen?">
+                                    <i class="fas fa-keyboard"></i> Teclados
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm quick-question" data-question="Hacen envíos al interior?">
+                                    <i class="fas fa-truck"></i> Envíos
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm quick-question" data-question="Aceptan cuotas?">
+                                    <i class="fas fa-credit-card"></i> Cuotas
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm quick-question" data-question="Qué garantía tienen los productos?">
+                                    <i class="fas fa-shield-alt"></i> Garantía
+                                </button>
+                            </div>
+                        </div>
+
+                        {% if not gemini_available %}
+                        <div class="alert alert-warning mt-3 mb-0">
+                            <small>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Modo básico activado:</strong> Para activar la IA completa, configura GEMINI_API_KEY en settings.py
+                            </small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info de Contacto -->
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    ¿Necesitas ayuda humana? 
+                    <a href="https://wa.me/541112345678" target="_blank" class="text-success">
+                        <i class="fab fa-whatsapp"></i> Chateá por WhatsApp
+                    </a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-messages {
+    height: 500px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+.chat-message {
+    display: flex;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.bot-message {
+    justify-content: flex-start;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+    flex-shrink: 0;
+}
+
+.bot-message .message-avatar {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.user-message .message-avatar {
+    background: #007bff;
+    color: white;
+}
+
+.message-content {
+    max-width: 70%;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bot-message .message-content {
+    border-bottom-left-radius: 4px;
+}
+
+.user-message .message-content {
+    background: #007bff;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message-text {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.user-message .message-time {
+    text-align: right;
+}
+
+.quick-questions .btn {
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.chat-input-container {
+    background: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar personalizado */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const sessionId = document.getElementById('session-id').value;
+    
+    // Preguntas rápidas
+    document.querySelectorAll('.quick-question').forEach(button => {
+        button.addEventListener('click', function() {
+            const question = this.getAttribute('data-question');
+            messageInput.value = question;
+            chatForm.dispatchEvent(new Event('submit'));
+        });
+    });
+    
+    // Enviar mensaje
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            await sendMessage(message);
+            messageInput.value = '';
+        }
+    });
+    
+    // Enter para enviar
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+    
+    async function sendMessage(message) {
+        // Agregar mensaje del usuario
+        addMessage(message, 'user');
+        
+        // Mostrar "escribiendo..."
+        showTypingIndicator();
+        
+        try {
+            const response = await fetch('{% url "chat_api" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ 
+                    message: message,
+                    session_id: sessionId
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Remover "escribiendo..."
+            removeTypingIndicator();
+            
+            if (data.response) {
+                addMessage(data.response, 'bot');
+            } else if (data.error) {
+                addMessage('😕 Ocurrió un error: ' + data.error, 'bot');
+            }
+        } catch (error) {
+            removeTypingIndicator();
+            addMessage('😕 Error de conexión. Intenta nuevamente.', 'bot');
+        }
+    }
+    
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}-message`;
+        
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('es-AR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-${sender === 'bot' ? 'robot' : 'user'}"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-text">${text}</div>
+                <div class="message-time">${timeString}</div>
+            </div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-message bot-message';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-text">
+                    <i class="fas fa-ellipsis-h"></i> Masibot está escribiendo...
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        document.getElementById('typing-indicator')?.remove();
+    }
+    
+    // Focus en el input
+    messageInput.focus();
+});
+</script>
+{% endblock %}
