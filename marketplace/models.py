@@ -29,21 +29,27 @@ class Product(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pendiente'),
-        ('processing', 'Procesando'),
+        ('paid', 'Pagado'),
         ('shipped', 'Enviado'),
         ('delivered', 'Entregado'),
         ('cancelled', 'Cancelado'),
     ]
     
+    # Información del usuario
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Información de la orden
+    total = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    mercadopago_id = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"Orden #{self.id} - {self.first_name} {self.last_name}"
@@ -57,9 +63,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
 
-# ELIMINA completamente la función create_sample_products que está mal
-# Y AGREGA estos modelos NUEVOS:
-
+# Modelos para envíos (opcionales)
 class ShippingOption(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre del envío")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")

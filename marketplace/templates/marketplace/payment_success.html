@@ -1,0 +1,12 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="alert alert-success">
+        <h2>¡Pago Exitoso! ✅</h2>
+        <p>Tu pago se ha procesado correctamente.</p>
+        <p>Recibirás un email con los detalles de tu compra.</p>
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">Seguir Comprando</a>
+</div>
+{% endblock %}

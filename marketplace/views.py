@@ -8,6 +8,10 @@ from .cart import Cart
 from django.http import HttpResponse
 from django.utils import timezone
 from decimal import Decimal
+import mercadopago
+from django.conf import settings
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     """Página de inicio"""
@@ -248,51 +252,9 @@ def clear_cart(request):
     return redirect('cart_detail')
 
 def checkout(request):
-    """Proceso de checkout"""
-    cart = Cart(request)
-    
-    if not cart:
-        messages.warning(request, 'Tu carrito está vacío.')
-        return redirect('product_list')
-    
-    if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            order = form.save(commit=False)
-            order.total_amount = cart.get_total_price()
-            order.save()
-            
-            # Crear items de la orden
-            for item in cart:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item['product'],
-                    quantity=item['quantity'],
-                    price=item['price']
-                )
-            
-            # Limpiar carrito
-            cart.clear()
-            
-            # Mostrar página de éxito
-            return render(request, 'marketplace/order_success.html', {'order': order})
-        else:
-            messages.error(request, 'Por favor corrige los errores en el formulario.')
-    else:
-        # Pre-llenar formulario si el usuario está autenticado
-        initial_data = {}
-        if request.user.is_authenticated:
-            initial_data = {
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'email': request.user.email,
-            }
-        form = OrderForm(initial=initial_data)
-    
-    return render(request, 'marketplace/checkout.html', {
-        'form': form,
-        'cart': cart
-    })
+    """Proceso de checkout - TEMPORALMENTE DESHABILITADO"""
+    messages.info(request, 'Por favor, usá "Pagar con Mercado Pago" desde el carrito.')
+    return redirect('cart_detail')
 
 # Vistas de API para AJAX
 def search_autocomplete(request):
@@ -371,3 +333,193 @@ def envios_info(request):
     }
     
     return render(request, 'marketplace/envios_info.html', context)
+
+# =============================================================================
+# MERCADO PAGO - VISTAS NUEVAS
+# =============================================================================
+
+def create_mercadopago_payment(request):
+    """Crear preferencia de pago con Mercado Pago"""
+    if request.method == 'POST':
+        try:
+            print("🔄 Iniciando creación de pago con Mercado Pago...")
+            
+            # Configurar Mercado Pago
+            sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+            
+            # Obtener carrito y datos de envío
+            cart = Cart(request)
+            shipping_price = request.session.get('shipping_price', 0)
+            postal_code = request.session.get('postal_code', '')
+            
+            print(f"📦 Carrito: {len(cart)} items")
+            print(f"🚚 Envío: ${shipping_price} para {postal_code}")
+            
+            # Verificar que el carrito no esté vacío
+            if not cart:
+                print("❌ Carrito vacío")
+                return JsonResponse({'error': 'El carrito está vacío'}, status=400)
+            
+            # Crear items para Mercado Pago
+            items = []
+            total_cart = 0
+            
+            # Agregar productos del carrito
+            for item in cart:
+                product_total = float(item['price']) * item['quantity']
+                total_cart += product_total
+                
+                items.append({
+                    "title": item['product'].name[:250],  # Limitar longitud
+                    "unit_price": float(item['price']),
+                    "quantity": item['quantity'],
+                    "currency_id": "ARS"
+                })
+                print(f"📋 Producto: {item['product'].name} - ${item['price']} x {item['quantity']}")
+            
+            print(f"💰 Total carrito: ${total_cart}")
+            print(f"🚚 Envío: ${shipping_price}")
+            print(f"💰 Total final: ${total_cart + float(shipping_price)}")
+            
+            # Agregar envío como item adicional si existe
+            if shipping_price > 0:
+                items.append({
+                    "title": f"Envío a {postal_code}",
+                    "unit_price": float(shipping_price),
+                    "quantity": 1,
+                    "currency_id": "ARS"
+                })
+            
+            # Crear preferencia de pago
+            preference_data = {
+    "items": items,
+    "back_urls": {
+        "success": "http://127.0.0.1:8000/payment/success/",
+        "failure": "http://127.0.0.1:8000/payment/failure/", 
+        "pending": "http://127.0.0.1:8000/payment/pending/"
+    },
+    #"auto_return": "all",  # DEJÁ ESTO ACTIVADO
+    "external_reference": f"order_{int(timezone.now().timestamp())}",
+    "statement_descriptor": "MARKETPLACE"
+}
+            
+            print("📡 Enviando solicitud a Mercado Pago...")
+            preference_response = sdk.preference().create(preference_data)
+            
+            print(f"📨 Respuesta MP: {preference_response}")
+            
+            if preference_response["status"] in [200, 201]:
+                preference = preference_response["response"]
+                print(f"✅ Pago creado - ID: {preference['id']}")
+                print(f"🔗 Init point: {preference['init_point']}")
+                
+                return JsonResponse({
+                    'id': preference['id'],
+                    'init_point': preference['init_point']
+                })
+            else:
+                error_msg = f"Error MP: {preference_response}"
+                print(f"❌ {error_msg}")
+                return JsonResponse({'error': 'Error al crear el pago'}, status=500)
+                
+        except Exception as e:
+            error_msg = f"Error en create_mercadopago_payment: {str(e)}"
+            print(f"💥 {error_msg}")
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+def payment_success(request):
+    """Página de éxito de pago"""
+    cart = Cart(request)
+    
+    # Limpiar carrito después de pago exitoso
+    cart.clear()
+    
+    # Limpiar datos de envío de la sesión
+    if 'shipping_price' in request.session:
+        del request.session['shipping_price']
+    if 'postal_code' in request.session:
+        del request.session['postal_code']
+    
+    # Obtener información del pago si está disponible
+    payment_id = request.GET.get('payment_id')
+    status = request.GET.get('status')
+    external_reference = request.GET.get('external_reference')
+    
+    context = {
+        'payment_id': payment_id,
+        'status': status,
+        'external_reference': external_reference
+    }
+    
+    return render(request, 'marketplace/payment_success.html', context)
+
+def payment_failure(request):
+    """Página de fallo de pago"""
+    payment_id = request.GET.get('payment_id')
+    status = request.GET.get('status')
+    
+    context = {
+        'payment_id': payment_id,
+        'status': status
+    }
+    
+    return render(request, 'marketplace/payment_failure.html', context)
+
+def payment_pending(request):
+    """Página de pago pendiente"""
+    payment_id = request.GET.get('payment_id')
+    status = request.GET.get('status')
+    
+    context = {
+        'payment_id': payment_id,
+        'status': status
+    }
+    
+    return render(request, 'marketplace/payment_pending.html', context)
+
+@csrf_exempt
+def payment_webhook(request):
+    """Webhook para recibir notificaciones de Mercado Pago"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print(f"🔔 Webhook recibido: {data}")
+            
+            if data.get('type') == 'payment':
+                payment_id = data['data']['id']
+                
+                # Configurar Mercado Pago
+                sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+                payment_info = sdk.payment().get(payment_id)
+                
+                if payment_info["status"] == 200:
+                    payment_data = payment_info["response"]
+                    
+                    # Procesar información del pago
+                    status = payment_data.get('status')
+                    external_reference = payment_data.get('external_reference')
+                    transaction_amount = payment_data.get('transaction_amount')
+                    
+                    print(f"💰 Pago procesado - ID: {payment_id}, Estado: {status}, Referencia: {external_reference}")
+                    
+                    # Aquí podrías actualizar tu orden en la base de datos
+                    # según el estado del pago
+                    
+                    if status == 'approved':
+                        print("✅ Pago aprobado - Actualizar orden como pagada")
+                    elif status == 'rejected':
+                        print("❌ Pago rechazado - Actualizar orden como fallida")
+                    elif status == 'in_process':
+                        print("⏳ Pago pendiente - Actualizar orden como pendiente")
+                        
+            return JsonResponse({'status': 'ok'})
+            
+        except Exception as e:
+            print(f"❌ Error en webhook: {str(e)}")
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)

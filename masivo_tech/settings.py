@@ -20,9 +20,12 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'chat',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -105,3 +108,11 @@ if ADMIN_DASHBOARD:
     TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'templates')]
 
 GEMINI_API_KEY = 'AIzaSyA8IGzH6smTA9VK7WSxFkcUxSlAasd825E'
+
+MERCADOPAGO_ACCESS_TOKEN = 'APP_USR-4107629571667346-110823-c8e8df769239a534002daf4df00bd862-2977404630'
+MERCADOPAGO_PUBLIC_KEY = 'APP_USR-cc38148a-7263-4d54-b049-512277e179fa'
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+BASE_URL = 'http://127.0.0.1:8000'

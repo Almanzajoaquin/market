@@ -1,0 +1,14 @@
+{% extends 'marketplace/base.html' %}
+
+{% block title %}Checkout - Market{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-warning text-center">
+        <h4>⚠️ Checkout en Mantenimiento</h4>
+        <p>Estamos mejorando nuestro sistema de pagos.</p>
+        <p>Por favor, usá el botón <strong>"Pagar con Mercado Pago"</strong> en el carrito.</p>
+        <a href="{% url 'cart_detail' %}" class="btn btn-primary mt-3">Volver al Carrito</a>
+    </div>
+</div>
+{% endblock %}

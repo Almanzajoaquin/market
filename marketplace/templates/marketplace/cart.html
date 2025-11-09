@@ -95,7 +95,7 @@
                     </div>
                     <hr>
 
-                    <!-- SECCIÓN DE CÁLCULO DE ENVÍO - AGREGADO -->
+                    <!-- SECCIÓN DE CÁLCULO DE ENVÍO -->
                     <div class="shipping-section mb-3">
                         <h6 class="mb-3">🚚 Calcular envío</h6>
                         
@@ -143,12 +143,30 @@
                         <i class="fas fa-lock me-2"></i>Proceder al Pago
                     </button>
                     {% else %}
-                    <a href="{% url 'checkout' %}" class="btn btn-primary w-100 mt-3">
-                        <i class="fas fa-credit-card me-2"></i>Proceder al Pago
-                    </a>
+                    <!-- BOTÓN MERCADO PAGO - MEJORADO Y SIN IMAGEN -->
+                    <div class="mercado-pago-section mt-4">
+                        <div class="text-center mb-3">
+                            <p class="text-muted small mb-2">Pago seguro con</p>
+                            <h5 class="text-primary mb-0">💙 Mercado Pago</h5>
+                        </div>
+                        
+                        <button onclick="payWithMercadoPago()" class="btn mercado-pago-btn w-100" id="mercadoPagoBtn">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <i class="fas fa-bolt me-2"></i>
+                                <span>Pagar ${{ total_with_shipping }}</span>
+                            </div>
+                        </button>
+                        
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                Pago 100% seguro · Tarjetas, efectivo y más
+                            </small>
+                        </div>
+                    </div>
                     {% endif %}
                     
-                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary w-100 mt-2">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary w-100 mt-3">
                         <i class="fas fa-shopping-bag me-2"></i>Seguir Comprando
                     </a>
                 </div>
@@ -171,4 +189,151 @@
     </div>
     {% endif %}
 </div>
+
+<!-- SCRIPT PARA MERCADO PAGO -->
+<script>
+function payWithMercadoPago() {
+    const button = document.getElementById('mercadoPagoBtn');
+    const originalContent = button.innerHTML;
+    
+    // Mostrar loading
+    button.disabled = true;
+    button.innerHTML = `
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="spinner-border spinner-border-sm text-white me-2" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <span>Procesando pago...</span>
+        </div>
+    `;
+    
+    // Crear pago con Mercado Pago
+    fetch('{% url "create_payment" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.init_point) {
+            // Redirigir a Mercado Pago
+            console.log('Redirigiendo a Mercado Pago:', data.init_point);
+            window.location.href = data.init_point;
+        } else {
+            // Mostrar error
+            console.error('Error data:', data);
+            throw new Error(data.error || 'Error desconocido al crear el pago');
+        }
+    })
+    .catch(error => {
+        console.error('Error completo:', error);
+        alert('Error al procesar el pago: ' + error.message + '\n\nPor favor, intenta nuevamente.');
+        
+        // Restaurar botón
+        button.disabled = false;
+        button.innerHTML = originalContent;
+    });
+}
+
+// Script para los botones de cantidad
+document.addEventListener('DOMContentLoaded', function() {
+    // Botones de cantidad +/-
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const action = this.getAttribute('data-action');
+            const input = this.closest('.input-group').querySelector('.quantity-input');
+            let value = parseInt(input.value) || 0;
+            
+            if (action === 'increase') {
+                value++;
+            } else if (action === 'decrease' && value > 1) {
+                value--;
+            }
+            
+            input.value = value;
+            
+            // Enviar formulario automáticamente
+            this.closest('form').submit();
+        });
+    });
+    
+    // Envío automático al cambiar cantidad manualmente
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+});
+</script>
+
+<style>
+/* ESTILOS MEJORADOS PARA MERCADO PAGO */
+.mercado-pago-btn {
+    background: linear-gradient(135deg, #009ee3 0%, #00b0ea 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 15px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 158, 227, 0.3);
+}
+
+.mercado-pago-btn:hover {
+    background: linear-gradient(135deg, #0080c0 0%, #0099d4 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 158, 227, 0.4);
+}
+
+.mercado-pago-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 158, 227, 0.3);
+}
+
+.mercado-pago-btn:disabled {
+    background: linear-gradient(135deg, #cccccc 0%, #bbbbbb 100%);
+    transform: none;
+    box-shadow: none;
+}
+
+.mercado-pago-section {
+    background: linear-gradient(135deg, #f8fdff 0%, #f0f9ff 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e3f2fd;
+    margin: 20px 0;
+}
+
+.cart-item-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.summary-card {
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 15px;
+}
+
+.summary-card .card-body {
+    padding: 25px;
+}
+
+.shipping-result {
+    border-left: 4px solid #28a745;
+    background: linear-gradient(135deg, #f8fff9 0%, #f0fff4 100%);
+}
+</style>
 {% endblock %}

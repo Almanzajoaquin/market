@@ -3,7 +3,6 @@ from django.utils.html import format_html
 from .models import Product, Order, OrderItem, ShippingOption, ShippingZone
 from django.urls import path
 from django.shortcuts import redirect
-from .admin_dashboard import admin_dashboard
 from django.utils import timezone
 from datetime import timedelta
 
@@ -33,17 +32,7 @@ class ProductAdmin(admin.ModelAdmin):
     category_display.short_description = 'Categoría'
     
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        # Ordenar por stock bajo primero
-        return qs.extra(select={
-            'stock_status': '''
-                CASE 
-                    WHEN stock = 0 THEN 2
-                    WHEN stock < 10 THEN 1  
-                    ELSE 0
-                END
-            '''
-        }).order_by('stock_status', '-created_at')
+        return super().get_queryset(request).order_by('-created_at')
     
     def stock_status(self, obj):
         if obj.stock == 0:
@@ -61,11 +50,33 @@ class OrderItemInline(admin.TabularInline):
     can_delete = False
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'total_amount', 'status', 'created_at', 'order_actions']
+    list_display = ['id', 'first_name', 'last_name', 'email', 'total_display', 'status', 'created_at', 'order_actions']
     list_filter = ['status', 'created_at']
-    search_fields = ['first_name', 'last_name', 'email']
-    readonly_fields = ['created_at', 'total_amount']
+    search_fields = ['first_name', 'last_name', 'email', 'mercadopago_id']
+    readonly_fields = ['created_at', 'updated_at', 'mercadopago_id']
     inlines = [OrderItemInline]
+    
+    fieldsets = [
+        ('Información del Cliente', {
+            'fields': [
+                'first_name', 'last_name', 'email', 'phone', 
+                'address', 'city'
+            ]
+        }),
+        ('Información de la Orden', {
+            'fields': [
+                'total', 'status', 'mercadopago_id', 'user'
+            ]
+        }),
+        ('Fechas', {
+            'fields': ['created_at', 'updated_at'],
+            'classes': ['collapse']
+        }),
+    ]
+    
+    def total_display(self, obj):
+        return f"${obj.total}"
+    total_display.short_description = 'Total'
     
     def order_actions(self, obj):
         return format_html('''
@@ -86,7 +97,7 @@ class ShippingZoneAdmin(admin.ModelAdmin):
     list_display = ['name', 'postal_code_start', 'postal_code_end', 'shipping_option']
     list_filter = ['shipping_option']
 
-# Registrar todos los modelos
+# Registrar modelos
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
-# ShippingOption y ShippingZone ya están registrados con @admin.register
+# OrderItem no necesita registro porque se muestra inline en Order

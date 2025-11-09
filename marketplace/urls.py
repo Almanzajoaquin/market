@@ -7,6 +7,12 @@ urlpatterns = [
     path('producto/<int:product_id>/', views.product_detail, name='product_detail'),
     path('ofertas/', views.ofertas, name='ofertas'),
     path('contacto/', views.contacto, name='contacto'),
+    path('payment/create/', views.create_mercadopago_payment, name='create_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/failure/', views.payment_failure, name='payment_failure'),
+    path('payment/pending/', views.payment_pending, name='payment_pending'),
+    path('payment/webhook/', views.payment_webhook, name='payment_webhook'),
+    
     
     # Carrito
     path('carrito/', views.cart_detail, name='cart_detail'),
@@ -16,8 +22,7 @@ urlpatterns = [
     path('carrito/vaciar/', views.clear_cart, name='clear_cart'),
     path('carrito/calcular-envio/', views.calculate_shipping, name='calculate_shipping'),
     
-    # Checkout
-    path('checkout/', views.checkout, name='checkout'),
+    
     
     # API
     path('buscar/autocomplete/', views.search_autocomplete, name='search_autocomplete'),
