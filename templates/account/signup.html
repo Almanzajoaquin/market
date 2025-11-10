@@ -1,0 +1,46 @@
+{% extends "marketplace/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Crear Cuenta</h2>
+                    
+                    <form method="post" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Registrarse</button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <!-- Registro con Google -->
+                    <div class="text-center">
+                        <p class="mb-3">O regístrate con:</p>
+                        <a href="{% url 'google_login' %}" class="btn btn-outline-danger w-100">
+                            <i class="fab fa-google me-2"></i>Google
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Link a Login -->
+                    <div class="text-center">
+                        <p>¿Ya tienes cuenta? 
+                            <a href="{% url 'account_login' %}" class="text-decoration-none">Inicia sesión aquí</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

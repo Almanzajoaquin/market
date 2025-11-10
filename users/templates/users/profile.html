@@ -1,0 +1,67 @@
+{% extends "marketplace/base.html" %}  <!-- ⬅️ ASÍ -->
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Sidebar del perfil -->
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Avatar" class="rounded-circle mb-3" width="120" height="120">
+                    {% else %}
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                    {% endif %}
+                    <h5>{{ user.get_display_name }}</h5>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <a href="{% url 'update_profile' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Editar Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <!-- Contenido principal del perfil -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>Nombre:</strong> {{ user.first_name|default:"No especificado" }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>Apellido:</strong> {{ user.last_name|default:"No especificado" }}</p>
+                            <p><strong>Teléfono:</strong> {{ user.phone_number|default:"No especificado" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de acciones -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6>Gestión de Cuenta</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'order_history' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-shopping-bag me-2"></i>Mis Pedidos
+                        </a>
+                        <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-lock me-2"></i>Cambiar Contraseña
+                        </a>
+                        <a href="{% url 'delete_account' %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Eliminar Cuenta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

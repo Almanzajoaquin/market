@@ -1,0 +1,63 @@
+{% extends "marketplace/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Eliminar Cuenta</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-slash fa-4x text-danger mb-3"></i>
+                        <h5 class="text-danger">¿Estás seguro de que querés eliminar tu cuenta?</h5>
+                        <p class="text-muted">
+                            Esta acción no se puede deshacer. Se perderán todos tus datos, 
+                            historial de pedidos y información personal.
+                        </p>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>Advertencia:</strong> Una vez eliminada la cuenta, no podrás recuperarla.
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="confirm_text" class="form-label">
+                                Escribe <strong>"ELIMINAR CUENTA"</strong> para confirmar:
+                            </label>
+                            <input type="text" class="form-control" id="confirm_text" name="confirm_text" 
+                                   placeholder="ELIMINAR CUENTA" required>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'profile' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                                <i class="fas fa-trash me-1"></i>Sí, Eliminar Mi Cuenta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Validación de texto de confirmación
+document.getElementById('confirm_text').addEventListener('input', function() {
+    var deleteBtn = document.getElementById('deleteBtn');
+    var confirmText = this.value.trim();
+    
+    if (confirmText === 'ELIMINAR CUENTA') {
+        deleteBtn.disabled = false;
+    } else {
+        deleteBtn.disabled = true;
+    }
+});
+</script>
+{% endblock %}
