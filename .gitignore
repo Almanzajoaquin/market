@@ -1,12 +1,21 @@
-# Django
-*.pyc
+# Archivos Django
 *__pycache__/
-db.sqlite3
+__pycache__/
+*.pyc
+*.pyo
 
 # Environment
 venv/
+.venv/
+
+# Variables de entorno
 .env
+*.env
 .env.local
+
+# Database
+db.sqlite3
+*.sqlite3
 
 # Media files (subidas de usuarios) - NO subir imágenes de productos
 media/
@@ -18,12 +27,13 @@ staticfiles/
 .vscode/
 .idea/
 
-# OS
+# OS Archivos del sistema
 .DS_Store
 Thumbs.db
-
 # Logs
 *.log
-
 # Archivos temporales
 *.tmp
+
+# borrador
+borrador

@@ -1,0 +1,29 @@
+{% extends "marketplace/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h2 class="card-title mb-4">Iniciar Sesión con Google</h2>
+                    <p class="mb-4">Estás a punto de iniciar sesión usando tu cuenta de Google.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fab fa-google me-2"></i>Continuar con Google
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'account_login' %}" class="text-decoration-none">
+                            ← Volver al login normal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

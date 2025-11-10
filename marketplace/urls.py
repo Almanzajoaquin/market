@@ -13,7 +13,6 @@ urlpatterns = [
     path('payment/pending/', views.payment_pending, name='payment_pending'),
     path('payment/webhook/', views.payment_webhook, name='payment_webhook'),
     
-    
     # Carrito
     path('carrito/', views.cart_detail, name='cart_detail'),
     path('carrito/agregar/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
@@ -22,11 +21,12 @@ urlpatterns = [
     path('carrito/vaciar/', views.clear_cart, name='clear_cart'),
     path('carrito/calcular-envio/', views.calculate_shipping, name='calculate_shipping'),
     
-    
-    
     # API
     path('buscar/autocomplete/', views.search_autocomplete, name='search_autocomplete'),
     
     # NUEVA: Página de información de envíos
     path('envios/', views.envios_info, name='envios_info'),
+
+    # Historial de pedidos para app Users
+    path('mis-pedidos/', views.order_history, name='order_history'),
 ]

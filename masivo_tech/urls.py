@@ -7,6 +7,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('marketplace.urls')),
     path('soporte/', include('chat.urls')),
+    # mis lineas
+    path('accounts/', include('allauth.urls')),  # necesario para allauth
+    path('accounts/', include('users.urls')), # usuarios
 ]
 
 if settings.DEBUG:

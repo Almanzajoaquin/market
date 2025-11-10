@@ -1,6 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import User
+""" al final uso user y se armala compatibilidad con try
+#cambio esto
+#from django.contrib.auth.models import User
+# por esto por ahora
+#from django.conf import settings
+"""
 from django.core.validators import MinValueValidator
+
+# FORMA COMPATIBLE - funciona con User normal Y CustomUser
+try:
+    # Intenta usar AUTH_USER_MODEL si existe
+    from django.conf import settings
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except (ImportError, AttributeError):
+    # Fallback al User original de Django
+    from django.contrib.auth.models import User
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -36,7 +51,14 @@ class Order(models.Model):
     ]
     
     # Información del usuario
+    # cambio por ahora
+    """ se usa el original """
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    #Por esto
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    """ como estamos usando customUser y User da error. solucion elegir uno de los dos"""
+    
+    # el resto igual
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()
