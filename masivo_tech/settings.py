@@ -189,7 +189,9 @@ CART_SESSION_ID = 'cart'
 
 # Google Gemini AI
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-
+# agregar si se olvida de que es gemini
+# if not GEMINI_API_KEY:
+#     print("⚠️  GEMINI_API_KEY no configurada - Usando modo básico")
 
 # Mercado Pago - CONFIGURACIÓN BÁSICA
 MERCADOPAGO_ACCESS_TOKEN = 'APP_USR-4107629571667346-110823-c8e8df769239a534002daf4df00bd862-2977404630'

@@ -73,8 +73,7 @@ def delete_account(request):
         user = request.user
         user.delete()
         messages.success(request, 'Tu cuenta ha sido eliminada exitosamente.')
-        return redirect('home')
-        #return redirect('index')
+        return redirect('index')
     return render(request, 'users/delete_account.html')
 
 # -------------------------Vista para historial de pedidos (si tienes app de órdenes)
