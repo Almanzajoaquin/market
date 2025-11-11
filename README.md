@@ -54,8 +54,8 @@ Sigue estos pasos para configurar el proyecto en tu entorno local:
 ### 1. Clonar el repositorio
 ```
 -------------------------------------------------bash
-git clone https://github.com/tuusuario/techmarket.git
-cd techmarket
+git clone https://github.com/tuusuario/market.git
+cd market
 
 ###
 
