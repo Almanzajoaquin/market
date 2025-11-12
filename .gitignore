@@ -35,5 +35,7 @@ Thumbs.db
 # Archivos temporales
 *.tmp
 
-# borrador
+# xd
 borrador
+comoUsarGIT.md
+migracionBDD.md

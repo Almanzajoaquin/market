@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url # -> RENDER
 
 # Cargar variables de entorno
 load_dotenv()
@@ -20,7 +21,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-clave-temporal-para-desarr
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # Hosts permitidos - importante para seguridad
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+# No vaa estar en local por ende == *
+# ANTES -> os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1') <-No va estar local==> *
 
 # =============================================================================
 # CONFIGURACIÓN DE LA APLICACIÓN
@@ -59,6 +62,9 @@ MIDDLEWARE = [
     # Middleware de seguridad
     'django.middleware.security.SecurityMiddleware',
     
+    # Whitenoise para archivos estáticos en producción -> RENDER
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     # Middleware de sesión
     'django.contrib.sessions.middleware.SessionMiddleware',
     
@@ -90,10 +96,14 @@ WSGI_APPLICATION = 'masivo_tech.wsgi.application'
 # =============================================================================
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.slite3'}",
+        conn_max_age=600
+    )
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 # =============================================================================
@@ -111,11 +121,12 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 # Configuración de Allauth
 SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = True
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_QUERY_EMAIL = True
@@ -144,6 +155,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+# --> RENDER <--
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Archivos media
 MEDIA_URL = '/media/'
@@ -189,11 +202,11 @@ CART_SESSION_ID = 'cart'
 
 # Google Gemini AI
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-
-
 # Mercado Pago - CONFIGURACIÓN BÁSICA
-MERCADOPAGO_ACCESS_TOKEN = 'APP_USR-4107629571667346-110823-c8e8df769239a534002daf4df00bd862-2977404630'
-MERCADOPAGO_PUBLIC_KEY = 'APP_USR-cc38148a-7263-4d54-b049-512277e179fa'
+
+
+MERCADOPAGO_ACCESS_TOKEN = os.getenv('MERCADOPAGO_ACCESS_TOKEN')
+MERCADOPAGO_PUBLIC_KEY = os.getenv('MERCADOPAGO_PUBLIC_KEY')
 
 # Google OAuth
 SOCIALACCOUNT_PROVIDERS = {
