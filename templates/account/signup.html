@@ -1,46 +1,277 @@
 {% extends "marketplace/base.html" %}
-{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<style>
+.hero-auth {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.auth-badge {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+    margin: 2rem auto;
+    max-width: 450px;
+}
+
+.auth-header {
+    background: #000;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.auth-body {
+    padding: 2rem;
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e5e5;
+}
+
+.auth-divider span {
+    background: white;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn-google {
+    background: white;
+    color: #333;
+    border: 1px solid #e5e5e5;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    font-weight: 500;
+}
+
+.btn-google:hover {
+    border-color: #000;
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #333;
+}
+
+/* Estilos simples para errores */
+.form-control {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.form-control:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+.form-control.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    background: #f8d7da;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.password-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Crear Cuenta</h2>
+<!-- Hero Auth -->
+<section class="hero-auth">
+    <div class="container">
+        <div class="auth-badge">
+            <i class="fas fa-user-plus me-1"></i>
+            CREAR CUENTA
+        </div>
+        <h1 class="h2 fw-bold mb-2">Únete a Masivo Tech</h1>
+        <p class="lead mb-3">Crea tu cuenta en segundos</p>
+    </div>
+</section>
+
+<!-- Signup Form -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h4 class="mb-0">Crear Cuenta</h4>
+            </div>
+            
+            <div class="auth-body">
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                <div class="alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
                     
-                    <form method="post" action="{% url 'account_signup' %}">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        
-                        {% if redirect_field_value %}
-                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                        {% endif %}
-                        
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Registrarse</button>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <!-- Registro con Google -->
-                    <div class="text-center">
-                        <p class="mb-3">O regístrate con:</p>
-                        <a href="{% url 'google_login' %}" class="btn btn-outline-danger w-100">
-                            <i class="fab fa-google me-2"></i>Google
-                        </a>
+                    <!-- Email -->
+                    <label class="form-label">Email</label>
+                    <input type="email" 
+                           name="email" 
+                           class="form-control {% if form.email.errors %}error{% endif %}" 
+                           placeholder="tu@email.com" 
+                           required 
+                           value="{{ form.email.value|default:'' }}">
+                    {% if form.email.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        {{ form.email.errors.0 }}
                     </div>
-
-                    <hr class="my-4">
-
-                    <!-- Link a Login -->
-                    <div class="text-center">
-                        <p>¿Ya tienes cuenta? 
-                            <a href="{% url 'account_login' %}" class="text-decoration-none">Inicia sesión aquí</a>
-                        </p>
+                    {% endif %}
+                    
+                    <!-- Username -->
+                    <label class="form-label">Nombre de usuario</label>
+                    <input type="text" 
+                           name="username" 
+                           class="form-control {% if form.username.errors %}error{% endif %}" 
+                           placeholder="Elige un nombre de usuario" 
+                           required
+                           value="{{ form.username.value|default:'' }}">
+                    {% if form.username.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        {{ form.username.errors.0 }}
                     </div>
+                    {% endif %}
+                    
+                    <!-- Contraseña -->
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" 
+                           name="password1" 
+                           class="form-control {% if form.password1.errors %}error{% endif %}" 
+                           placeholder="Crea una contraseña" 
+                           required>
+                    
+                    <div class="password-hint">
+                        <small>La contraseña debe tener al menos 8 caracteres y no ser completamente numérica.</small>
+                    </div>
+                    
+                    {% if form.password1.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        {{ form.password1.errors.0 }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Confirmar Contraseña -->
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <input type="password" 
+                           name="password2" 
+                           class="form-control {% if form.password2.errors %}error{% endif %}" 
+                           placeholder="Repite tu contraseña" 
+                           required>
+                    {% if form.password2.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        {{ form.password2.errors.0 }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Términos -->
+                    <div style="margin: 1.5rem 0;">
+                        <input type="checkbox" name="terms" id="terms" required style="margin-right: 0.5rem;">
+                        <label for="terms" style="font-size: 0.9rem;">
+                            Acepto los <a href="#" class="text-dark">Términos</a> y <a href="#" class="text-dark">Privacidad</a>
+                        </label>
+                    </div>
+                    
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-dark w-100 mb-3 py-2">
+                        <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>o registrate con</span>
+                </div>
+
+                <a href="/accounts/google/login/?process=signup" class="btn btn-google w-100 mb-3">
+                    <i class="fab fa-google me-2"></i>Google
+                </a>
+
+                <div class="text-center">
+                    <p class="mb-0 small">
+                        ¿Ya tenés cuenta? 
+                        <a href="{% url 'account_login' %}" class="text-dark fw-bold">Iniciá sesión aquí</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

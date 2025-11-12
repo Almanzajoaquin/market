@@ -1,0 +1,67 @@
+{% if cart %}
+    <div class="cart-panel-items">
+        {% for item in cart %}
+        <div class="cart-panel-item" id="cartItem{{ item.product.id }}">
+            <div class="cart-item-image">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            </div>
+            
+            <div class="cart-item-info">
+                <div class="cart-item-header">
+                    <h6 class="cart-item-title">{{ item.product.name }}</h6>
+                    <div class="cart-item-price">${{ item.price }} c/u</div>
+                </div>
+                
+                <div class="cart-item-controls">
+                    <!-- Botones con data attributes para AJAX -->
+                    <div class="quantity-controls-compact">
+                        <button type="button" 
+                                class="quantity-btn-compact cart-minus" 
+                                data-product-id="{{ item.product.id }}"
+                                {% if item.quantity <= 1 %}disabled{% endif %}>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity-input-compact" id="quantity{{ item.product.id }}">{{ item.quantity }}</span>
+                        <button type="button" 
+                                class="quantity-btn-compact cart-plus" 
+                                data-product-id="{{ item.product.id }}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <span class="cart-item-total" id="total{{ item.product.id }}">${{ item.total_price }}</span>
+                    
+                    <button type="button" 
+                            class="btn btn-sm btn-outline-danger cart-remove" 
+                            data-product-id="{{ item.product.id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                
+                <!-- Advertencia de stock -->
+                {% if item.quantity > item.product.stock %}
+                <div class="stock-warning-compact">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Máximo disponible: {{ item.product.stock }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="cart-panel-total">
+        <div class="d-flex justify-content-between fw-bold fs-6">
+            <span>Total:</span>
+            <span class="text-primary" id="cartPanelTotal">${{ cart_total_price }}</span>
+        </div>
+    </div>
+{% else %}
+    <div class="cart-panel-empty">
+        <div class="empty-cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <h4 class="empty-cart-title">Tu carrito está vacío</h4>
+        <p class="empty-cart-text">Agrega productos para empezar tu compra</p>
+    </div>
+{% endif %}

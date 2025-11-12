@@ -1,64 +1,47 @@
-// Sistema de ordenamiento mejorado
+// === sorting.js - Sistema de Ordenamiento ===
+
 class SortingManager {
     constructor() {
+        this.selectors = {
+            sortSelect: 'select[onchange*="updateUrlParameter"]',
+            sortDropdown: '.sort-dropdown',
+            productsGrid: '.products-grid'
+        };
+        
         this.init();
     }
-    
+
     init() {
+        console.log('🔄 Inicializando SortingManager...');
         this.bindSortingEvents();
-        this.updateActiveSort();
+        console.log('✅ SortingManager inicializado');
     }
-    
+
+    /**
+     * Vincula eventos de ordenamiento
+     */
     bindSortingEvents() {
-        // Dropdown de ordenamiento
-        const sortDropdown = document.querySelector('.sort-dropdown');
-        const sortToggle = document.querySelector('.sort-dropdown-toggle');
-        const sortMenu = document.querySelector('.sort-dropdown-menu');
-        const sortOptions = document.querySelectorAll('.sort-option');
+        // Select de ordenamiento
+        const sortSelect = document.querySelector(this.selectors.sortSelect);
         
-        if (sortToggle && sortMenu) {
-            // Toggle del dropdown
-            sortToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sortMenu.classList.toggle('show');
-                sortToggle.classList.toggle('active');
-            });
-            
-            // Cerrar dropdown al hacer click fuera
-            document.addEventListener('click', () => {
-                sortMenu.classList.remove('show');
-                sortToggle.classList.remove('active');
-            });
-            
-            // Prevenir que el dropdown se cierre al hacer click dentro
-            sortMenu.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-        }
-        
-        // Opciones de ordenamiento
-        sortOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                const sortValue = option.dataset.sort;
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                const sortValue = e.target.value;
+                console.log(`🔄 Aplicando ordenamiento: ${sortValue}`);
                 this.applySorting(sortValue);
             });
-        });
-        
-        // Remover ordenamiento específico
-        const removeButtons = document.querySelectorAll('[data-sort-remove]');
-        removeButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.removeSorting();
-            });
-        });
+        }
+
+        // Mostrar loading al cambiar ordenamiento
+        this.addLoadingIndicator();
     }
-    
+
+    /**
+     * Aplica el ordenamiento seleccionado
+     */
     applySorting(sortValue) {
         const currentUrl = new URL(window.location.href);
         
-        // Actualizar parámetro de ordenamiento
         if (sortValue) {
             currentUrl.searchParams.set('sort', sortValue);
         } else {
@@ -71,53 +54,44 @@ class SortingManager {
         // Navegar a la nueva URL
         window.location.href = currentUrl.toString();
     }
-    
-    removeSorting() {
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.delete('sort');
-        
-        this.showLoadingState();
-        window.location.href = currentUrl.toString();
-    }
-    
+
+    /**
+     * Muestra estado de loading
+     */
     showLoadingState() {
-        const productsGrid = document.querySelector('.products-grid') || document.querySelector('.row');
+        const productsGrid = document.querySelector(this.selectors.productsGrid);
         if (productsGrid) {
-            productsGrid.classList.add('loading');
+            productsGrid.style.opacity = '0.7';
+            productsGrid.style.transition = 'opacity 0.3s ease';
         }
         
-        // Mostrar toast de carga
-        MasivoTechUtils.showToast('Aplicando ordenamiento...', 'info');
+        MasivoTechUtils.showToast('Aplicando ordenamiento...', 'info', 2000);
     }
-    
-    updateActiveSort() {
-        const currentSort = new URLSearchParams(window.location.search).get('sort');
-        const sortOptions = document.querySelectorAll('.sort-option');
-        const sortBadges = document.querySelectorAll('.sort-badge');
-        
-        // Remover estado activo de todos
-        sortOptions.forEach(option => option.classList.remove('active'));
-        sortBadges.forEach(badge => badge.classList.remove('active'));
-        
-        // Activar el actual
-        if (currentSort) {
-            const activeOption = document.querySelector(`.sort-option[data-sort="${currentSort}"]`);
-            const activeBadge = document.querySelector(`.sort-badge:has(button[data-sort-remove="${currentSort}"])`);
-            
-            if (activeOption) activeOption.classList.add('active');
-            if (activeBadge) activeBadge.classList.add('active');
-            
-            // Actualizar texto del dropdown toggle
-            const toggle = document.querySelector('.sort-dropdown-toggle span');
-            if (toggle) {
-                const optionText = activeOption ? activeOption.textContent.trim() : 'Ordenar por...';
-                toggle.textContent = optionText;
+
+    /**
+     * Agrega indicador de loading al DOM
+     */
+    addLoadingIndicator() {
+        // Puedes agregar un spinner visual si lo necesitas
+        const style = document.createElement('style');
+        style.textContent = `
+            .sorting-loading {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                z-index: 9999;
             }
-        }
+        `;
+        document.head.appendChild(style);
     }
 }
 
 // Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     window.sortingManager = new SortingManager();
 });

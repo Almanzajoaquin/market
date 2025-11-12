@@ -1,0 +1,74 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-warning">
+                <div class="card-body text-center py-5">
+                    <!-- Icono de Pendiente -->
+                    <div class="payment-status-icon mb-4">
+                        <i class="fas fa-clock fa-4x text-warning"></i>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h2 class="card-title text-warning mb-3">Pago en Proceso</h2>
+                    
+                    <!-- Mensaje -->
+                    <p class="card-text text-muted mb-4">
+                        Tu pago está siendo procesado. Esto puede tomar algunos minutos.
+                        Te notificaremos por email cuando se complete la transacción.
+                    </p>
+
+                    <!-- Información del Pago -->
+                    {% if payment_id %}
+                    <div class="payment-info bg-light p-3 rounded mb-4">
+                        <small class="text-muted">
+                            <strong>ID de pago:</strong> {{ payment_id }}<br>
+                            <strong>Estado:</strong> {{ status|default:"En proceso" }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Indicador de Progreso -->
+                    <div class="progress mb-4" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" 
+                             style="width: 75%">
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="payment-actions">
+                        <a href="{% url 'index' %}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-home me-2"></i>
+                            Volver al Inicio
+                        </a>
+                        <a href="{% url 'order_history' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-shopping-bag me-2"></i>
+                            Ver Mis Pedidos
+                        </a>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info mt-4 pt-3 border-top">
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    Recibirás un email de confirmación
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Proceso automático
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

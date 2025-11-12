@@ -1,96 +1,187 @@
 {% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.hero-contacto {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.contact-badge {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.contact-info-item:hover {
+    background: #f8f9fa;
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.contact-details h6 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.contact-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.map-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Hero Section Contacto -->
+<!-- Hero Contacto -->
 <section class="hero-contacto">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-4 mb-3">📞 CONTACTO</h1>
-                <p class="lead">Estamos aquí para ayudarte. ¡Contáctanos!</p>
+            <div class="col-12">
+                <div class="contact-badge">
+                    <i class="fas fa-headset me-1"></i>
+                    CONTACTO
+                </div>
+                <h1 class="h2 fw-bold mb-2">¿Necesitas ayuda?</h1>
+                <p class="lead mb-0">Estamos aquí para asistirte</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Información de Contacto -->
-<section class="py-5">
+<!-- Contenido Principal -->
+<section class="main-content py-4">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 mb-5">
-                <h2 class="section-title">Envíanos un Mensaje</h2>
-                
-                <form method="post" class="contact-form">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="nombre" class="form-label">Nombre completo *</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+            <div class="col-lg-8 mb-4">
+                <div class="enhanced-card">
+                    <h2 class="h4 fw-bold mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        Envíanos un mensaje
+                    </h2>
+                    
+                    <form method="post" class="enhanced-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Nombre completo *</label>
+                                <input type="text" class="form-control form-control-sm" name="nombre" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Email *</label>
+                                <input type="email" class="form-control form-control-sm" name="email" required>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Asunto</label>
+                            <input type="text" class="form-control form-control-sm" name="asunto">
                         </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="asunto" class="form-label">Asunto</label>
-                        <input type="text" class="form-control" id="asunto" name="asunto">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="mensaje" class="form-label">Mensaje *</label>
-                        <textarea class="form-control" id="mensaje" name="mensaje" rows="5" required></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
-                    </button>
-                </form>
+                        
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold">Mensaje *</label>
+                            <textarea class="form-control form-control-sm" name="mensaje" rows="4" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-dark btn-sm">
+                            <i class="fas fa-paper-plane me-1"></i>
+                            Enviar mensaje
+                        </button>
+                    </form>
+                </div>
             </div>
             
+            <!-- Información de Contacto -->
             <div class="col-lg-4">
-                <div class="contact-info-card">
-                    <h3 class="mb-4">Información de Contacto</h3>
+                <div class="enhanced-card">
+                    <h3 class="h5 fw-bold mb-3">Información de contacto</h3>
                     
-                    <div class="contact-item">
+                    <div class="contact-info-item">
                         <div class="contact-icon">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="contact-details">
-                            <h5>Dirección</h5>
+                            <h6>Ubicación</h6>
                             <p>Buenos Aires, Argentina</p>
                         </div>
                     </div>
                     
-                    <div class="contact-item">
+                    <div class="contact-info-item">
                         <div class="contact-icon">
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-details">
-                            <h5>Teléfono</h5>
+                            <h6>Teléfono</h6>
                             <p>+54 11 1234-5678</p>
                         </div>
                     </div>
                     
-                    <div class="contact-item">
+                    <div class="contact-info-item">
                         <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
-                            <h5>Email</h5>
+                            <h6>Email</h6>
                             <p>info@masivotech.com</p>
                         </div>
                     </div>
                     
-                    <div class="contact-item">
+                    <div class="contact-info-item">
                         <div class="contact-icon">
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="contact-details">
-                            <h5>Horario de Atención</h5>
-                            <p>Lunes a Viernes: 9:00 - 18:00<br>
-                            Sábados: 9:00 - 13:00</p>
+                            <h6>Horario</h6>
+                            <p>Lun-Vie: 9:00 - 18:00</p>
+                        </div>
+                    </div>
+
+                    <div class="border-top pt-3 mt-2">
+                        <h6 class="small fw-bold mb-2">Síguenos</h6>
+                        <div class="social-links">
+                            <a href="#" class="social-link" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -100,41 +191,20 @@
 </section>
 
 <!-- Mapa -->
-<section class="py-5 bg-light">
+<section class="bg-light py-4">
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h2 class="section-title">¿Dónde Estamos?</h2>
+                <h2 class="h4 fw-bold text-center mb-3">Nuestra ubicación</h2>
                 <div class="map-container">
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d210147.6571399704!2d-58.57338494999999!3d-34.61574375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20CABA!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" 
                         width="100%" 
-                        height="400" 
-                        style="border:0; border-radius: 8px;" 
+                        height="300" 
+                        style="border:0;" 
                         allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
+                        loading="lazy">
                     </iframe>
-                </div>
-                
-                <!-- Información de ubicación debajo del mapa -->
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="location-info">
-                            <h5><i class="fas fa-map-marker-alt text-primary me-2"></i>Nuestra Ubicación</h5>
-                            <p class="mb-1">Av. Corrientes 1234</p>
-                            <p class="mb-1">Microcentro</p>
-                            <p>Buenos Aires, Argentina</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="location-info">
-                            <h5><i class="fas fa-clock text-primary me-2"></i>Horario de Atención</h5>
-                            <p class="mb-1">Lunes a Viernes: 9:00 - 18:00</p>
-                            <p class="mb-1">Sábados: 9:00 - 13:00</p>
-                            <p>Domingos: Cerrado</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

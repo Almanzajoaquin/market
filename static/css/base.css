@@ -1,0 +1,55 @@
+/* === base.css - Estilo Original === */
+:root {
+    /* Colores - Blanco y Negro Elegante */
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray-light: #f8f8f8;
+    --gray-border: #e5e5e5;
+    --gray-text: #666666;
+    --gray-dark: #333333;
+    
+    /* Tipografía */
+    --font-primary: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Espaciado */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-primary);
+    color: var(--black);
+    background: var(--white);
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
+}

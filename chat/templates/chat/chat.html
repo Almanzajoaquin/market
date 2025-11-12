@@ -1,50 +1,235 @@
+<!-- En: market/chat/templates/chat/chat.html -->
 {% extends 'marketplace/base.html' %}
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+<style>
+.hero-chatbot {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.chat-badge-main {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.chat-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.chat-feature {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.chat-feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+}
+
+.chat-feature h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.chat-feature p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.chat-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin: 2rem 0;
+}
+
+.chat-header {
+    background: #000;
+    color: white;
+    padding: 1.25rem 1.5rem;
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.chat-message {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.user-message .message-avatar {
+    background: #666;
+}
+
+.message-content {
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: 70%;
+    border: 1px solid #e5e5e5;
+}
+
+.user-message .message-content {
+    background: #000;
+    color: white;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    color: #666;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.user-message .message-time {
+    color: rgba(255,255,255,0.7);
+}
+
+.chat-input-container {
+    padding: 1rem 1.5rem;
+    background: white;
+    border-top: 1px solid #e5e5e5;
+}
+
+.quick-questions {
+    margin-top: 1rem;
+}
+
+.quick-question {
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    margin: 0.2rem;
+}
+
+.quick-question:hover {
+    background: #000;
+    color: white;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container my-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <!-- Header del Chat -->
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="d-flex align-items-center">
-                        <div class="chat-avatar me-3">
-                            <i class="fas fa-robot fa-2x"></i>
+<!-- Hero Chatbot -->
+<section class="hero-chatbot">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="chat-badge-main">
+                    <i class="fas fa-robot me-1"></i>
+                    ASISTENTE IA
+                </div>
+                <h1 class="h2 fw-bold mb-2">Masibot</h1>
+                <p class="lead mb-3">Tu asistente especializado en gaming</p>
+                
+                <div class="chat-features">
+                    <div class="chat-feature">
+                        <div class="chat-feature-icon">
+                            <i class="fas fa-bolt"></i>
                         </div>
-                        <div>
-                            <h4 class="mb-0">Masibot 🤖</h4>
-                            <small class="opacity-75">Asistente IA de Masivo Tech</small>
+                        <h4>Respuesta Rápida</h4>
+                        <p>Resuelve consultas al instante</p>
+                    </div>
+                    <div class="chat-feature">
+                        <div class="chat-feature-icon">
+                            <i class="fas fa-gamepad"></i>
                         </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-{% if gemini_available %}success{% else %}warning{% endif %}">
-                                <i class="fas fa-circle me-1"></i>
-                                {% if gemini_available %}IA Conectada{% else %}Modo Básico{% endif %}
-                            </span>
+                        <h4>Experto Gaming</h4>
+                        <p>Conoce todos los productos</p>
+                    </div>
+                    <div class="chat-feature">
+                        <div class="chat-feature-icon">
+                            <i class="fas fa-clock"></i>
                         </div>
+                        <h4>24/7 Disponible</h4>
+                        <p>Ayuda cuando la necesites</p>
                     </div>
                 </div>
-                
-                <!-- Área de Mensajes -->
-                <div class="card-body p-0">
-                    <div id="chat-messages" class="chat-messages">
-                        <!-- Mensaje de bienvenida -->
-                        <div class="chat-message bot-message">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chatbot -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="chat-container">
+                    <!-- Header -->
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center">
+                            <div class="chat-avatar me-3">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 h5">Masibot</h4>
+                                <small class="opacity-75">
+                                    {% if gemini_available %}
+                                    <i class="fas fa-circle text-success me-1"></i>Conectado
+                                    {% else %}
+                                    <i class="fas fa-circle text-warning me-1"></i>Modo Básico
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensajes -->
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-message">
                             <div class="message-avatar">
                                 <i class="fas fa-robot"></i>
                             </div>
                             <div class="message-content">
                                 <div class="message-text">
-                                    <strong>¡Hola! Soy Masibot 🎮</strong><br>
-                                    Tu asistente de IA de <strong>Masivo Tech</strong>. 
+                                    <strong>¡Hola! Soy Masibot</strong><br>
+                                    Tu asistente de Masivo Tech. 
                                     {% if gemini_available %}
-                                    Estoy aquí para ayudarte con cualquier consulta sobre periféricos gaming! 🤖
+                                    ¿En qué puedo ayudarte con periféricos gaming?
                                     {% else %}
-                                    Puedo ayudarte con información de productos, envíos y garantías! 📦
+                                    Puedo ayudarte con información de productos.
                                     {% endif %}
                                 </div>
                                 <div class="message-time">Ahora</div>
@@ -52,66 +237,67 @@
                         </div>
                     </div>
                     
-                    <!-- Input de Mensaje -->
+                    <!-- Input -->
                     <div class="chat-input-container">
                         <form id="chat-form" class="d-flex gap-2">
                             {% csrf_token %}
                             <input type="hidden" id="session-id" value="{{ session_id }}">
                             <input type="text" id="message-input" class="form-control" 
-                                   placeholder="Escribe tu mensaje..." autocomplete="off" required
+                                   placeholder="Escribe tu mensaje..." 
                                    {% if not gemini_available %}disabled{% endif %}>
-                            <button type="submit" class="btn btn-primary px-4" {% if not gemini_available %}disabled{% endif %}>
+                            <button type="submit" class="btn btn-dark" {% if not gemini_available %}disabled{% endif %}>
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </form>
                         
                         <!-- Preguntas Rápidas -->
-                        <div class="quick-questions mt-3">
-                            <small class="text-muted d-block mb-2">Preguntas frecuentes:</small>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-primary btn-sm quick-question" data-question="Qué teclados gaming tienen?">
-                                    <i class="fas fa-keyboard"></i> Teclados
+                        <div class="quick-questions mt-2">
+                            <small class="text-muted d-block mb-1">Preguntas frecuentes:</small>
+                            <div class="d-flex flex-wrap gap-1">
+                                <button type="button" class="btn quick-question" data-question="Qué teclados tienen?">
+                                    Teclados
                                 </button>
-                                <button type="button" class="btn btn-outline-primary btn-sm quick-question" data-question="Hacen envíos al interior?">
-                                    <i class="fas fa-truck"></i> Envíos
+                                <button type="button" class="btn quick-question" data-question="Hacen envíos?">
+                                    Envíos
                                 </button>
-                                <button type="button" class="btn btn-outline-primary btn-sm quick-question" data-question="Aceptan cuotas?">
-                                    <i class="fas fa-credit-card"></i> Cuotas
+                                <button type="button" class="btn quick-question" data-question="Aceptan cuotas?">
+                                    Cuotas
                                 </button>
-                                <button type="button" class="btn btn-outline-primary btn-sm quick-question" data-question="Qué garantía tienen los productos?">
-                                    <i class="fas fa-shield-alt"></i> Garantía
+                                <button type="button" class="btn quick-question" data-question="Qué garantía tienen?">
+                                    Garantía
                                 </button>
                             </div>
                         </div>
 
                         {% if not gemini_available %}
-                        <div class="alert alert-warning mt-3 mb-0">
+                        <div class="alert alert-warning mt-2 mb-0 py-2">
                             <small>
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <strong>Modo básico activado:</strong> Para activar la IA completa, configura GEMINI_API_KEY en settings.py
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                <strong>Modo básico:</strong> Configura GEMINI_API_KEY para IA completa
                             </small>
                         </div>
                         {% endif %}
                     </div>
                 </div>
-            </div>
-            
-            <!-- Info de Contacto -->
-            <div class="chat-footer">
-                <small class="text-muted">
-                    ¿Necesitas ayuda humana? 
-                    <a href="https://wa.me/541112345678" target="_blank" class="text-success">
-                        <i class="fab fa-whatsapp"></i> Chateá por WhatsApp
-                    </a>
-                </small>
+                
+                <!-- Soporte -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        ¿Necesitas ayuda humana? 
+                        <a href="https://wa.me/541112345678" target="_blank" class="text-dark">
+                            <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                        </a>
+                    </small>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// JavaScript del chatbot (igual que antes pero compacto)
 document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('message-input');
@@ -127,9 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Enviar mensaje - PREVENIR ENVÍO TRADICIONAL
+    // Enviar mensaje
     chatForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // ← ESTA LÍNEA ES CLAVE
+        e.preventDefault();
         const message = messageInput.value.trim();
         if (message) {
             sendMessage(message);
@@ -137,26 +323,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Enter para enviar
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            const message = messageInput.value.trim();
-            if (message) {
-                sendMessage(message);
-                messageInput.value = '';
-            }
-        }
-    });
-    
     async function sendMessage(message) {
-        // Agregar mensaje del usuario
         addMessage(message, 'user');
-        
-        // Mostrar "escribiendo..."
         showTypingIndicator();
-        
-        // Deshabilitar inputs temporalmente
         setInputsState(false);
         
         try {
@@ -164,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
                 body: JSON.stringify({ 
                     message: message,
@@ -172,26 +341,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            
             const data = await response.json();
-            
-            // Remover "escribiendo..."
             removeTypingIndicator();
             
             if (data.response) {
                 addMessage(data.response, 'bot');
-            } else if (data.error) {
-                addMessage('😕 Ocurrió un error: ' + data.error, 'bot');
             }
         } catch (error) {
-            console.error('Error en el chat:', error);
             removeTypingIndicator();
-            addMessage('😕 Error de conexión. Intenta nuevamente.', 'bot');
+            addMessage('Error de conexión. Intenta nuevamente.', 'bot');
         } finally {
-            // Rehabilitar inputs
             setInputsState(true);
         }
     }
@@ -217,67 +376,40 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         chatMessages.appendChild(messageDiv);
-        scrollToBottom();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     
     function showTypingIndicator() {
         const typingDiv = document.createElement('div');
-        typingDiv.className = 'chat-message bot-message';
+        typingDiv.className = 'chat-message';
         typingDiv.id = 'typing-indicator';
         typingDiv.innerHTML = `
             <div class="message-avatar">
                 <i class="fas fa-robot"></i>
             </div>
             <div class="message-content">
-                <div class="message-text typing-indicator">
-                    <i class="fas fa-ellipsis-h"></i> Masibot está escribiendo...
+                <div class="text-muted">
+                    <i class="fas fa-ellipsis-h"></i> Escribiendo...
                 </div>
             </div>
         `;
         chatMessages.appendChild(typingDiv);
-        scrollToBottom();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     
     function removeTypingIndicator() {
         const typingIndicator = document.getElementById('typing-indicator');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
+        if (typingIndicator) typingIndicator.remove();
     }
     
     function setInputsState(enabled) {
         messageInput.disabled = !enabled;
-        document.querySelector('#chat-form button[type="submit"]').disabled = !enabled;
+        document.querySelector('#chat-form button').disabled = !enabled;
         document.querySelectorAll('.quick-question').forEach(btn => {
             btn.disabled = !enabled;
         });
-        
-        if (enabled) {
-            messageInput.focus();
-        }
+        if (enabled) messageInput.focus();
     }
-    
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    // Focus inicial
-    messageInput.focus();
 });
 </script>
 {% endblock %}

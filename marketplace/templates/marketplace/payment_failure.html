@@ -1,0 +1,79 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-body text-center py-5">
+                    <!-- Icono de Error -->
+                    <div class="payment-status-icon mb-4">
+                        <i class="fas fa-times-circle fa-4x text-danger"></i>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h2 class="card-title text-danger mb-3">Pago Fallido</h2>
+                    
+                    <!-- Mensaje -->
+                    <p class="card-text text-muted mb-4">
+                        Lo sentimos, no pudimos procesar tu pago. 
+                        Esto puede deberse a varios motivos:
+                    </p>
+                    
+                    <!-- Posibles Causas -->
+                    <div class="reasons-list text-start mb-4">
+                        <div class="reason-item mb-2">
+                            <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                            Fondos insuficientes en la cuenta
+                        </div>
+                        <div class="reason-item mb-2">
+                            <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                            Problemas con la tarjeta de crédito/débito
+                        </div>
+                        <div class="reason-item mb-2">
+                            <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                            Error temporal del sistema
+                        </div>
+                        <div class="reason-item">
+                            <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                            Datos de pago incorrectos
+                        </div>
+                    </div>
+
+                    <!-- Información del Pago -->
+                    {% if payment_id %}
+                    <div class="payment-info bg-light p-3 rounded mb-4">
+                        <small class="text-muted">
+                            <strong>ID de pago:</strong> {{ payment_id }}<br>
+                            <strong>Estado:</strong> {{ status|default:"Fallido" }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Acciones -->
+                    <div class="payment-actions">
+                        <a href="{% url 'cart_detail' %}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Volver al Carrito
+                        </a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-shopping-bag me-2"></i>
+                            Seguir Comprando
+                        </a>
+                    </div>
+
+                    <!-- Soporte -->
+                    <div class="support-info mt-4 pt-3 border-top">
+                        <small class="text-muted">
+                            ¿Necesitas ayuda? 
+                            <a href="{% url 'contacto' %}" class="text-decoration-none">
+                                Contacta a nuestro soporte
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

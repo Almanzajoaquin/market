@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="masivotech-theme">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Masivo Tech - Periféricos Gaming 🎮{% endblock %}</title>
+    
+    <!-- Meta Tags para SEO -->
+    <meta name="description" content="Tienda oficial de Masivo Tech. Los mejores periféricos gaming: teclados mecánicos, mouses gaming, auriculares y monitores. Envíos a todo el país.">
+    <meta name="keywords" content="gaming, periféricos, teclados, mouses, auriculares, monitores, masivo tech">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,222 +19,441 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS Personalizado -->
+    <!-- CSS Modularizado -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/tomi-dropdown.css' %}">
-    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     
+    <!-- CSS Extra por página -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <span><i class="fas fa-phone me-2"></i>011 1234-5678</span>
-                    <span class="ms-3"><i class="fas fa-envelope me-2"></i>info@masivotech.com</span>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <span><i class="fas fa-truck me-2"></i>Envíos a todo el país</span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- 🔔 Notificaciones Toast -->
+    <div id="toast-container" class="toast-container"></div>
 
-    <!-- Main Header -->
+    <!-- 🟡 NAVBAR PRINCIPAL -->
     <header class="main-header">
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    <strong>MASIVO</strong>TECH
+        <div class="container">
+            <nav class="navbar">
+                <!-- Logo -->
+                <a href="{% url 'index' %}" class="nav-brand">
+                    masivotech
                 </a>
-                
-                <div class="navbar-search">
-                    <form class="d-flex" method="GET" action="{% url 'product_list' %}">
-                        <input class="form-control" type="search" name="q" 
-                            placeholder="Buscar productos..." value="{{ request.GET.q }}"
-                            aria-label="Buscar productos">
-                        <button class="btn btn-search" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-                <!------------------------------------TOMI html-->
-                <!------------------------------------TOMI html-->
-                <!------------------------------------TOMI html-->
-                <!------------------------------------TOMI html-->
-                <div class="navbar-actions">
-                    {% if user.is_authenticated %}
-                    <!-- DROPDOWN DE USUARIO COMPLETO -->
-                    <div class="tomi-user-dropdown">
-                        <div class="tomi-dropdown-toggle">
-                            {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="Avatar" class="tomi-user-avatar">
-                            {% else %}
-                            <i class="fas fa-user-circle tomi-user-icon"></i>
-                            {% endif %}
-                            <span>{{ user.get_display_name|truncatechars:12 }}</span>
-                            <i class="fas fa-chevron-down tomi-chevron"></i>
+
+                <!-- Navegación Desktop -->
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+                    </li>
+                    
+                    <!-- Dropdown de Productos -->
+                    <li class="nav-item dropdown">
+                        <a href="{% url 'product_list' %}" class="nav-link dropdown-toggle">
+                            Productos <i class="fas fa-chevron-down ms-1" style="font-size: 0.7rem;"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'product_list' %}?category=teclados" class="dropdown-item">
+                                <i class="fas fa-keyboard me-2"></i>Teclados Mecánicos
+                            </a>
+                            <a href="{% url 'product_list' %}?category=mouses" class="dropdown-item">
+                                <i class="fas fa-mouse me-2"></i>Mouses Gaming
+                            </a>
+                            <a href="{% url 'product_list' %}?category=auriculares" class="dropdown-item">
+                                <i class="fas fa-headset me-2"></i>Auriculares
+                            </a>
+                            <a href="{% url 'product_list' %}?category=monitores" class="dropdown-item">
+                                <i class="fas fa-desktop me-2"></i>Monitores Gaming
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'product_list' %}" class="dropdown-item">
+                                <i class="fas fa-th-large me-2"></i>Todos los Productos
+                            </a>
                         </div>
-                        <div class="tomi-dropdown-menu">
-                            <a class="tomi-dropdown-item" href="{% url 'profile' %}">
+                    </li>
+                    
+                    <!-- Nuevos enlaces -->
+                    <li class="nav-item">
+                        <a href="{% url 'ofertas' %}" class="nav-link">Ofertas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'chat' %}" class="nav-link">
+                            Chatbot
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Acciones de Usuario -->
+                <div class="nav-actions">
+                    <!-- Búsqueda -->
+                    <button class="nav-action-btn search-toggle" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <!-- Usuario -->
+                    {% if user.is_authenticated %}
+                    <div class="user-dropdown">
+                        <button class="nav-action-btn user-toggle" aria-label="Mi cuenta">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <!-- Menú dropdown del usuario -->
+                        <div class="dropdown-menu user-dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'profile' %}">
                                 <i class="fas fa-user me-2"></i>Mi Perfil
                             </a>
-                            <a class="tomi-dropdown-item" href="{% url 'order_history' %}">
+                            <a class="dropdown-item" href="{% url 'order_history' %}">
                                 <i class="fas fa-shopping-bag me-2"></i>Mis Pedidos
                             </a>
-                            <div class="tomi-dropdown-divider"></div>
-                            <!-- LINK QUE ABRE EL MODAL -->
-                            <a class="tomi-dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" data-bs-target="#logoutModal">
                                 <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                             </a>
                         </div>
                     </div>
                     {% else %}
-                    <!-- Usuario NO logueado -->
-                    <a href="{% url 'account_login' %}" class="nav-icon">
+                    <a href="{% url 'account_login' %}" class="nav-action-btn" aria-label="Iniciar sesión">
                         <i class="fas fa-user"></i>
-                        <span>Mi Cuenta</span>
                     </a>
                     {% endif %}
-                    <!-- CHAT DE SOPORTE -->
-                    <a href="{% url 'chat' %}" class="nav-icon">
-                        <i class="fas fa-headset"></i>
-                        <span>Soporte</span>
-                    </a>
-                    <!-- CARRITO -->
-                    <a href="{% url 'cart_detail' %}" class="nav-icon">
+
+                    <!-- Carrito -->
+                    <button class="nav-action-btn cart-toggle" aria-label="Carrito de compras">
                         <i class="fas fa-shopping-cart"></i>
-                        <span>Carrito</span>
                         <span class="cart-badge">{{ cart_total_items|default:0 }}</span>
-                    </a>
+                    </button>
+
+                    <!-- Menú Hamburguesa - Solo Mobile -->
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
-                <!--------------------------------------------------------TOMI html-->
-                <!--------------------------------------------------------TOMI html-->
-                <!--------------------------------------------------------TOMI html-->
-                <!--------------------------------------------------------TOMI html-->
-                </div>
-            </div>
-        </nav>
-        
-        <!-- Main Navigation -->
-        <nav class="main-navigation">
-            <div class="container">
-                <ul class="nav">
-                    <li class="nav-item"><a href="{% url 'index' %}" class="nav-link">INICIO</a></li>
-                    
-                    <li class="nav-item dropdown">
-                        <a href="{% url 'product_list' %}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            PRODUCTOS
-                        </a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% url 'product_list' %}">
-                                <i class="fas fa-th me-2"></i>Todos los Productos
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{% url 'product_list' %}?category=teclados">
-                                <i class="fas fa-keyboard me-2"></i>Teclados
-                            </a>
-                            <a class="dropdown-item" href="{% url 'product_list' %}?category=mouses">
-                                <i class="fas fa-mouse me-2"></i>Mouses
-                            </a>
-                            <a class="dropdown-item" href="{% url 'product_list' %}?category=auriculares">
-                                <i class="fas fa-headset me-2"></i>Auriculares
-                            </a>
-                            <a class="dropdown-item" href="{% url 'product_list' %}?category=monitores">
-                                <i class="fas fa-desktop me-2"></i>Monitores
-                            </a>
-                        </div>
-                    </li>
-                    
-                    <li class="nav-item"><a href="{% url 'ofertas' %}" class="nav-link">OFERTAS</a></li>
-                    <!-- AGREGADO: SOPORTE EN NAVEGACIÓN PRINCIPAL -->
-                    <li class="nav-item"><a href="{% url 'contacto' %}" class="nav-link">CONTACTO</a></li>
-                </ul>
-            </div>
-        </nav>
+            </nav>
+        </div>
     </header>
 
-    <!-- Mensajes -->
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- 📱 PANEL LATERAL - MENÚ MÓVIL -->
+    <div class="mobile-panel" id="mobilePanel">
+        <div class="mobile-panel-header">
+            <h3 class="mobile-panel-title">Menú</h3>
+            <button class="mobile-panel-close" id="mobilePanelClose" aria-label="Cerrar menú">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        {% endfor %}
+        <div class="mobile-panel-content">
+            <ul class="mobile-nav-links">
+                <li class="mobile-nav-item">
+                    <a href="{% url 'index' %}" class="mobile-nav-link">
+                        Inicio
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <button class="mobile-nav-link mobile-dropdown-toggle">
+                        <span>Productos</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="mobile-dropdown-menu" id="mobileProductsDropdown">
+                        <a href="{% url 'product_list' %}?category=teclados" class="mobile-dropdown-item">
+                            <i class="fas fa-keyboard me-2"></i>Teclados Mecánicos
+                        </a>
+                        <a href="{% url 'product_list' %}?category=mouses" class="mobile-dropdown-item">
+                            <i class="fas fa-mouse me-2"></i>Mouses Gaming
+                        </a>
+                        <a href="{% url 'product_list' %}?category=auriculares" class="mobile-dropdown-item">
+                            <i class="fas fa-headset me-2"></i>Auriculares
+                        </a>
+                        <a href="{% url 'product_list' %}?category=monitores" class="mobile-dropdown-item">
+                            <i class="fas fa-desktop me-2"></i>Monitores Gaming
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'product_list' %}" class="mobile-dropdown-item">
+                            <i class="fas fa-th-large me-2"></i>Todos los Productos
+                        </a>
+                    </div>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="{% url 'ofertas' %}" class="mobile-nav-link">
+                        Ofertas
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="{% url 'envios_info' %}" class="mobile-nav-link">
+                        Envíos
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="{% url 'contacto' %}" class="mobile-nav-link">
+                        Contacto
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="{% url 'chat' %}" class="mobile-nav-link">
+                        Chatbot
+                    </a>
+                </li>
+                
+                <!-- SECCIÓN DE USUARIO EN MOBILE -->
+                {% if user.is_authenticated %}
+                <li class="mobile-nav-item">
+                    <button class="mobile-nav-link mobile-dropdown-toggle">
+                        <span><i class="fas fa-user me-2"></i>Mi Cuenta</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="mobile-dropdown-menu" id="mobileUserDropdown">
+                        <a href="{% url 'profile' %}" class="mobile-dropdown-item">
+                            <i class="fas fa-user me-2"></i>Mi Perfil
+                        </a>
+                        <a href="{% url 'order_history' %}" class="mobile-dropdown-item">
+                            <i class="fas fa-shopping-bag me-2"></i>Mis Pedidos
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="mobile-dropdown-item" data-bs-target="#logoutModal">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a>
+                    </div>
+                </li>
+                {% else %}
+                <li class="mobile-nav-item">
+                    <a href="{% url 'account_login' %}" class="mobile-nav-link">
+                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-    {% endif %}
 
-    <!-- Contenido Principal -->
-    <main>
+    <!-- 🛒 PANEL LATERAL - CARRITO -->
+
+<div class="cart-panel" id="cartPanel">
+    <div class="cart-panel-header">
+        <h3 class="cart-panel-title">Carrito (<span id="cartPanelCount">{{ cart_total_items|default:0 }}</span>)</h3>
+        <button class="mobile-panel-close" id="cartPanelClose" aria-label="Cerrar carrito">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="cart-panel-content" id="cartPanelContent">
+        {% if cart %}
+            <div class="cart-panel-items">
+                {% for item in cart %}
+                <div class="cart-panel-item" id="cartItem{{ item.product.id }}">
+                    <div class="cart-item-image">
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    </div>
+                    
+                    <div class="cart-item-info">
+                        <h6 class="cart-item-title">{{ item.product.name }}</h6>
+                        <p class="cart-item-price">${{ item.price }} c/u</p>
+                        
+                        <div class="cart-item-controls">
+                            <!-- Botones con data attributes para AJAX -->
+                            <div class="quantity-controls">
+                                <button type="button" 
+                                        class="quantity-btn cart-minus" 
+                                        data-product-id="{{ item.product.id }}"
+                                        {% if item.quantity <= 1 %}disabled{% endif %}>
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="quantity-input" id="quantity{{ item.product.id }}">{{ item.quantity }}</span>
+                                <button type="button" 
+                                        class="quantity-btn cart-plus" 
+                                        data-product-id="{{ item.product.id }}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            
+                            <span class="cart-item-total" id="total{{ item.product.id }}">${{ item.total_price }}</span>
+                            
+                            <button type="button" 
+                                    class="btn btn-sm btn-outline-danger cart-remove" 
+                                    data-product-id="{{ item.product.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-panel-total">
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total:</span>
+                    <span class="text-primary" id="cartPanelTotal">${{ cart.get_total_price }}</span>
+                </div>
+            </div>
+        {% else %}
+            <div class="cart-panel-empty">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h4 class="empty-cart-title">Tu carrito está vacío</h4>
+                <p class="empty-cart-text">Agrega productos para empezar tu compra</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="cart-panel-actions">
+        <a href="{% url 'cart_detail' %}" class="btn-explore">
+            Ver Carrito Completo
+        </a>
+    </div>
+</div>
+
+    <!-- 🎭 OVERLAY PARA PANELES -->
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- 🚪 Modal de Confirmación de Logout - VERSIÓN CORREGIDA -->
+    <div class="modal" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cerrar Sesión</h5>
+                    <button type="button" class="btn-close" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="modal-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <p class="modal-text">¿Estás seguro de que deseas cerrar sesión?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <form method="post" action="{% url 'account_logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 Contenido Principal -->
+    <main class="main-content">
+        <!-- Mensajes del Sistema -->
+        {% if messages %}
+        <div class="container">
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible">
+                    <div class="alert-content">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="alert-close" data-bs-dismiss="alert" aria-label="Cerrar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Bloque de Contenido -->
         {% block content %}
+        <!-- El contenido específico de cada página va aquí -->
         {% endblock %}
     </main>
 
-    <!-- Footer -->
+    <!-- 🏪 Footer Principal -->
     <footer class="main-footer">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>MASIVO TECH</h5>
-                    <p>Tu tienda de confianza para periféricos gaming. Calidad, precio y servicio en un solo lugar.</p>
+            <div class="footer-content">
+                <!-- Información de la Empresa -->
+                <div class="footer-section">
+                    <h5 class="footer-title">MASIVO TECH</h5>
+                    <p class="footer-text">
+                        Tu tienda de confianza para periféricos gaming. 
+                        Calidad, precio y servicio en un solo lugar.
+                    </p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
                     </div>
                 </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>PRODUCTOS</h5>
+
+                <!-- Enlaces de Productos -->
+                <div class="footer-section">
+                    <h5 class="footer-title">PRODUCTOS</h5>
                     <ul class="footer-links">
-                        <li><a href="{% url 'product_list' %}?category=teclados">Teclados</a></li>
-                        <li><a href="{% url 'product_list' %}?category=mouses">Mouses</a></li>
+                        <li><a href="{% url 'product_list' %}?category=teclados">Teclados Mecánicos</a></li>
+                        <li><a href="{% url 'product_list' %}?category=mouses">Mouses Gaming</a></li>
                         <li><a href="{% url 'product_list' %}?category=auriculares">Auriculares</a></li>
-                        <li><a href="{% url 'product_list' %}?category=monitores">Monitores</a></li>
+                        <li><a href="{% url 'product_list' %}?category=monitores">Monitores Gaming</a></li>
                     </ul>
                 </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>AYUDA</h5>
+
+                <!-- Soporte y Ayuda -->
+                <div class="footer-section">
+                    <h5 class="footer-title">AYUDA</h5>
                     <ul class="footer-links">
-                        <!-- AGREGADO: CHAT DE SOPORTE EN EL FOOTER -->
                         <li><a href="{% url 'chat' %}">Chat de Soporte</a></li>
                         <li><a href="{% url 'contacto' %}">Contacto</a></li>
-                        <li><a href="{% url 'envios_info' %}">Envíos</a></li>
-                        <li><a href="#">Cambios</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="{% url 'envios_info' %}">Información de Envíos</a></li>
+                        <li><a href="#">Cambios y Devoluciones</a></li>
+                        <li><a href="#">Preguntas Frecuentes</a></li>
                     </ul>
                 </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>CONTACTO</h5>
+
+                <!-- Información de Contacto -->
+                <div class="footer-section">
+                    <h5 class="footer-title">CONTACTO</h5>
                     <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt me-2"></i> Buenos Aires, Argentina</p>
-                        <p><i class="fas fa-phone me-2"></i> +54 11 1234-5678</p>
-                        <p><i class="fas fa-envelope me-2"></i> info@masivotech.com</p>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span>Buenos Aires, Argentina</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone me-2"></i>
+                            <span>+54 11 1234-5678</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>info@masivotech.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock me-2"></i>
+                            <span>Lun-Vie: 9:00 - 18:00</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Línea Inferior -->
             <div class="footer-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
                         <p>&copy; 2024 Masivo Tech. Todos los derechos reservados.</p>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <div class="payment-methods">
-                            <span>Métodos de pago:</span>
-                            <i class="fab fa-cc-visa"></i>
-                            <i class="fab fa-cc-mastercard"></i>
-                            <i class="fab fa-cc-amex"></i>
-                            <i class="fab fa-cc-paypal"></i>
+                    
+                    <div class="payment-methods">
+                        <span class="payment-text">Métodos de pago:</span>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa" title="Visa"></i>
+                            <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                            <i class="fab fa-cc-amex" title="American Express"></i>
+                            <i class="fab fa-cc-paypal" title="PayPal"></i>
+                            <i class="fas fa-money-bill-wave" title="Efectivo"></i>
                         </div>
                     </div>
                 </div>
@@ -235,41 +461,30 @@
         </div>
     </footer>
 
-    <!-- ============================ -->
-    <!-- MODAL DE CONFIRMACIÓN LOGOUT -->
-    <!-- ============================ -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Cerrar Sesión</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <i class="fas fa-sign-out-alt fa-3x text-warning mb-3"></i>
-                    <p>¿Estás seguro de que deseas cerrar sesión?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <!-- Form de logout real -->
-                    <form method="post" action="{% url 'account_logout' %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Sí, Cerrar Sesión</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <!-- 📜 Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JavaScript Personalizado -->
+    
+    <!-- JavaScript Modularizado -->
     {% load static %}
-    <script src="{% static 'js/utils.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/sorting.js' %}"></script>
-    <script src="{% static 'js/cart.js' %}"></script>
-    <script src="{% static 'js/tomi-dropdown.js' %}"></script>
+<!-- 📜 Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript Modularizado -->
+{% load static %}
+<script src="{% static 'js/utils.js' %}"></script>
+<script src="{% static 'js/navigation.js' %}"></script>
+<script src="{% static 'js/offers.js' %}"></script>   
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/cart.js' %}"></script>
+<script src="{% static 'js/cart-panel-simple.js' %}"></script> 
+    <!-- Scripts Extra por página -->
     {% block scripts %}{% endblock %}
+
+    <!-- Inicialización de la Aplicación -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 Masivo Tech - Listo para gaming!');
+        });
+    </script>
 </body>
 </html>

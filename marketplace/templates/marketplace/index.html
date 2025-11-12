@@ -1,104 +1,946 @@
 {% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* === CARRUSEL HERO MEJORADO === */
+.hero-carousel {
+    position: relative;
+    height: 80vh;
+    min-height: 600px;
+    overflow: hidden;
+    background: #000;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 1;
+}
+
+.carousel-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.carousel-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.carousel-badge {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s infinite;
+}
+
+.carousel-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.carousel-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.carousel-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.carousel-btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.carousel-btn-primary {
+    background: #000;
+    color: white;
+    border: 2px solid #000;
+}
+
+.carousel-btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.carousel-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.carousel-nav {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 3;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.3s ease;
+    font-size: 1.25rem;
+}
+
+.carousel-arrow:hover {
+    background: rgba(0,0,0,0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-prev {
+    left: 2rem;
+}
+
+.carousel-next {
+    right: 2rem;
+}
+
+/* === SECCIÓN MARCAS DESTACADAS === */
+.brands-section {
+    padding: 4rem 0;
+    background: #f8f9fa;
+}
+
+.brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.brand-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.brand-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.brand-logo {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.brand-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* === SECCIÓN CATEGORÍAS === */
+.categories-section {
+    padding: 5rem 0;
+    background: white;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.category-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-image {
+    height: 200px;
+    background: linear-gradient(45deg, #333, #000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+}
+
+.category-icon {
+    font-size: 4rem;
+    color: white;
+    z-index: 2;
+    position: relative;
+}
+
+.category-info {
+    padding: 2rem;
+    text-align: center;
+}
+
+.category-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.category-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* === SECCIÓN POR QUÉ ELEGIRNOS === */
+.why-choose-section {
+    padding: 5rem 0;
+    background: #000;
+    color: white;
+}
+
+.features-grid-enhanced {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card-enhanced {
+    background: rgba(255,255,255,0.1);
+    padding: 2.5rem;
+    border-radius: 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.feature-card-enhanced:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.feature-icon-enhanced {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.feature-title-enhanced {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.feature-description-enhanced {
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+}
+
+/* === TESTIMONIOS === */
+.testimonials-section {
+    padding: 5rem 0;
+    background: #f8f9fa;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.testimonial-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.testimonial-text {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+.author-info h4 {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.author-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* === BANNER FINAL === */
+.cta-banner {
+    background: linear-gradient(135deg, #000 0%, #333 100%);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-subtitle {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .hero-carousel {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .carousel-title {
+        font-size: 2.5rem;
+    }
+    
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .carousel-prev {
+        left: 1rem;
+    }
+    
+    .carousel-next {
+        right: 1rem;
+    }
+    
+    .brands-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-title {
+        font-size: 2rem;
+    }
+    
+    .carousel-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .carousel-btn {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
+    
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Hero Carousel -->
+<!-- 🎮 CARRUSEL HERO -->
 <section class="hero-carousel">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
-        </div>
-        
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=1200&h=500&fit=crop" class="d-block w-100" alt="Ofertas Especiales">
-                <div class="carousel-caption">
-                    <h2>OFERTAS ESPECIALES</h2>
-                    <p>Hasta 50% off en periféricos seleccionados</p>
-                    <a href="{% url 'ofertas' %}" class="btn btn-primary">Ver Ofertas</a>
-                </div>
+    <!-- Slide 1 - Teclados -->
+    <div class="carousel-slide active" data-slide="1">
+        <div class="carousel-bg" style="background: linear-gradient(45deg, #1a1a1a, #404040);"></div>
+        <div class="carousel-content">
+            <div class="carousel-badge">
+                <i class="fas fa-keyboard me-2"></i>
+                NUEVA COLECCIÓN
             </div>
-            
-            <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&h=500&fit=crop" class="d-block w-100" alt="Nuevos Productos">
-                <div class="carousel-caption">
-                    <h2>NUEVOS PRODUCTOS</h2>
-                    <p>Descubre las últimas novedades en gaming</p>
-                    <a href="{% url 'product_list' %}" class="btn btn-primary">Ver Productos</a>
-                </div>
-            </div>
-            
-            <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=500&fit=crop" class="d-block w-100" alt="Envío Gratis">
-                <div class="carousel-caption">
-                    <h2>ENVÍO GRATIS</h2>
-                    <p>En compras superiores a $50.000</p>
-                    <a href="{% url 'product_list' %}" class="btn btn-primary">Comprar Ahora</a>
-                </div>
+            <h1 class="carousel-title">Teclados Mecánicos Profesionales</h1>
+            <p class="carousel-subtitle">Experimenta la respuesta táctil perfecta para gaming y trabajo. Switches mecánicos de alta precisión.</p>
+            <div class="carousel-actions">
+                <a href="{% url 'product_list' %}?category=teclados" class="carousel-btn carousel-btn-primary">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Comprar Ahora
+                </a>
+                <a href="{% url 'product_list' %}" class="carousel-btn carousel-btn-outline">
+                    <i class="fas fa-eye me-2"></i>
+                    Ver Catálogo
+                </a>
             </div>
         </div>
-        
-        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
+    </div>
+
+    <!-- Slide 2 - Mouses -->
+    <div class="carousel-slide" data-slide="2">
+        <div class="carousel-bg" style="background: linear-gradient(45deg, #2c2c2c, #555555);"></div>
+        <div class="carousel-content">
+            <div class="carousel-badge">
+                <i class="fas fa-mouse me-2"></i>
+                PRECISIÓN EXTREMA
+            </div>
+            <h1 class="carousel-title">Mouses Gaming de Alta Precisión</h1>
+            <p class="carousel-subtitle">Sensores ópticos de última generación. Diseño ergonómico para sesiones de gaming prolongadas.</p>
+            <div class="carousel-actions">
+                <a href="{% url 'product_list' %}?category=mouses" class="carousel-btn carousel-btn-primary">
+                    <i class="fas fa-bolt me-2"></i>
+                    Descubrir Mouses
+                </a>
+                <a href="{% url 'ofertas' %}" class="carousel-btn carousel-btn-outline">
+                    <i class="fas fa-tag me-2"></i>
+                    Ver Ofertas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3 - Auriculares -->
+    <div class="carousel-slide" data-slide="3">
+        <div class="carousel-bg" style="background: linear-gradient(45deg, #333333, #666666);"></div>
+        <div class="carousel-content">
+            <div class="carousel-badge">
+                <i class="fas fa-headset me-2"></i>
+                SONIDO INMERSIVO
+            </div>
+            <h1 class="carousel-title">Auriculares con Sonido Surround 7.1</h1>
+            <p class="carousel-subtitle">Audio de alta fidelidad para una experiencia gaming inmersiva. Cancelación de ruido activa.</p>
+            <div class="carousel-actions">
+                <a href="{% url 'product_list' %}?category=auriculares" class="carousel-btn carousel-btn-primary">
+                    <i class="fas fa-volume-up me-2"></i>
+                    Explorar Audio
+                </a>
+                <a href="{% url 'chat' %}" class="carousel-btn carousel-btn-outline">
+                    <i class="fas fa-robot me-2"></i>
+                    Asesoramiento IA
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flechas de Navegación -->
+    <button class="carousel-arrow carousel-prev">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="carousel-arrow carousel-next">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Indicadores -->
+    <div class="carousel-nav">
+        <button class="carousel-dot active" data-slide="1"></button>
+        <button class="carousel-dot" data-slide="2"></button>
+        <button class="carousel-dot" data-slide="3"></button>
     </div>
 </section>
 
-<!-- Featured Products -->
-<!-- Featured Products -->
-<section class="py-5">
+<!-- 🏆 MARCAS DESTACADAS -->
+<section class="brands-section">
     <div class="container">
-        <h2 class="section-title">PRODUCTOS DESTACADOS</h2>
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Marcas Premium</h2>
+            <p class="section-subtitle">Trabajamos con las mejores marcas del mercado gaming</p>
+        </div>
+        <div class="brands-grid">
+            <div class="brand-item">
+                <div class="brand-logo">
+                    <i class="fab fa-razer"></i>
+                </div>
+                <div class="brand-name">Razer</div>
+            </div>
+            <div class="brand-item">
+                <div class="brand-logo">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <div class="brand-name">Redragon</div>
+            </div>
+            <div class="brand-item">
+                <div class="brand-logo">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="brand-name">Logitech</div>
+            </div>
+            <div class="brand-item">
+                <div class="brand-logo">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <div class="brand-name">HyperX</div>
+            </div>
+            <div class="brand-item">
+                <div class="brand-logo">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="brand-name">SteelSeries</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 🎯 CATEGORÍAS DESTACADAS -->
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Explora por Categoría</h2>
+            <p class="section-subtitle">Encuentra el periférico perfecto para tu setup</p>
+        </div>
+        <div class="categories-grid">
+            <a href="{% url 'product_list' %}?category=teclados" class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-keyboard category-icon"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-name">Teclados Mecánicos</h3>
+                    <p class="category-count">Desde $15.000</p>
+                </div>
+            </a>
+            <a href="{% url 'product_list' %}?category=mouses" class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-mouse category-icon"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-name">Mouses Gaming</h3>
+                    <p class="category-count">Desde $8.000</p>
+                </div>
+            </a>
+            <a href="{% url 'product_list' %}?category=auriculares" class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-headset category-icon"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-name">Auriculares</h3>
+                    <p class="category-count">Desde $12.000</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 🎮 PRODUCTOS DESTACADOS (sección existente mejorada) -->
+<section class="featured-products">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Productos Destacados</h2>
+            <p class="section-subtitle">Los más vendidos de nuestra comunidad gamer</p>
+        </div>
         
-        <div class="row">
+        <div class="products-grid">
             {% for product in products %}
-            <div class="col-lg-3 col-md-6 mb-4">
-                <a href="{% url 'product_detail' product.id %}" class="product-card-simple">
-                    <div class="product-image">
+            <div class="product-card enhanced-card" data-product-id="{{ product.id }}">
+                <div class="product-image-wrapper">
+                    <a href="{% url 'product_detail' product.id %}" class="product-image-link">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" 
+                             alt="{{ product.name }}" 
+                             class="product-img"
+                             loading="lazy">
                         {% else %}
-                            <i class="fas fa-image fa-3x text-muted"></i>
+                        <div class="product-image-placeholder">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
                         {% endif %}
-                        
-                        <!-- Alertas de stock -->
+                    </a>
+                    
+                    <div class="product-badges">
                         {% if product.stock <= 0 %}
-                        <div class="stock-alert out-of-stock">
+                        <span class="badge badge-out">
                             <i class="fas fa-ban"></i>
-                            <span>AGOTADO</span>
-                        </div>
+                            AGOTADO
+                        </span>
                         {% elif product.stock < 5 %}
-                        <div class="stock-alert low-stock">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span>POCO STOCK</span>
-                        </div>
+                        <span class="badge badge-warning">
+                            <i class="fas fa-bolt"></i>
+                            ÚLTIMAS UNIDADES
+                        </span>
                         {% endif %}
                     </div>
                     
-                    <div class="product-info-simple">
-                        <h3 class="product-title">{{ product.name }}</h3>
-                        <div class="product-price">{{ product.get_price_in_pesos }}</div>
+                    <div class="product-quick-action">
+                        <button class="btn-quick-view" data-product-id="{{ product.id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
-                </a>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No hay productos disponibles en este momento.
+                </div>
+                
+                <div class="product-info">
+                    <div class="product-category">
+                        {{ product.get_category_display }}
+                    </div>
+                    
+                    <h3 class="product-title">
+                        <a href="{% url 'product_detail' product.id %}">
+                            {{ product.name }}
+                        </a>
+                    </h3>
+                    
+                    <div class="product-price-section">
+                        <span class="product-price">{{ product.get_price_in_pesos }}</span>
+                    </div>
+                    
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="rating-count">(24)</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    {% if product.stock > 0 %}
+                    <button type="button" 
+                            class="btn btn-dark w-100 add-to-cart-btn" 
+                            data-product-id="{{ product.id }}">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Agregar al Carrito
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline-dark w-100" disabled>
+                        <i class="fas fa-bell me-2"></i>
+                        Notificar Disponibilidad
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
-        
-        <div class="text-center mt-4">
-            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Ver Todos los Productos</a>
+    </div>
+</section>
+
+<!-- 💎 POR QUÉ ELEGIRNOS -->
+<section class="why-choose-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title text-white">¿Por Qué Elegir Masivo Tech?</h2>
+            <p class="section-subtitle text-white-50">La mejor experiencia gaming comienza con los mejores periféricos</p>
+        </div>
+        <div class="features-grid-enhanced">
+            <div class="feature-card-enhanced">
+                <div class="feature-icon-enhanced">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h3 class="feature-title-enhanced">Envío Express</h3>
+                <p class="feature-description-enhanced">
+                    Recibí tus productos en 24-48 horas en CABA. Despacho inmediato en compras antes de las 14hs.
+                </p>
+            </div>
+            <div class="feature-card-enhanced">
+                <div class="feature-icon-enhanced">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title-enhanced">Garantía Extendida</h3>
+                <p class="feature-description-enhanced">
+                    12 meses de garantía oficial en todos los productos. Soporte técnico especializado incluido.
+                </p>
+            </div>
+            <div class="feature-card-enhanced">
+                <div class="feature-icon-enhanced">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3 class="feature-title-enhanced">12 Cuotas Sin Interés</h3>
+                <p class="feature-description-enhanced">
+                    Pagá en hasta 12 cuotas sin interés con todas las tarjetas. Financiación inmediata.
+                </p>
+            </div>
         </div>
     </div>
 </section>
 
+<!-- 🚀 BANNER FINAL -->
+<section class="cta-banner">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">¿Listo para Mejorar tu Setup?</h2>
+            <p class="cta-subtitle">Descubre los mejores periféricos gaming con descuentos exclusivos</p>
+            <div class="hero-actions">
+                <a href="{% url 'product_list' %}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Comprar Ahora
+                </a>
+                <a href="{% url 'ofertas' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-tag me-2"></i>
+                    Ver Ofertas
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// CARRUSEL INTERACTIVO
+class HeroCarousel {
+    constructor() {
+        this.slides = document.querySelectorAll('.carousel-slide');
+        this.dots = document.querySelectorAll('.carousel-dot');
+        this.prevBtn = document.querySelector('.carousel-prev');
+        this.nextBtn = document.querySelector('.carousel-next');
+        this.currentSlide = 0;
+        this.interval = null;
+        
+        this.init();
+    }
+
+    init() {
+        // Event listeners
+        this.prevBtn.addEventListener('click', () => this.prevSlide());
+        this.nextBtn.addEventListener('click', () => this.nextSlide());
+        
+        this.dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        // Auto-play
+        this.startAutoPlay();
+
+        // Pause on hover
+        const carousel = document.querySelector('.hero-carousel');
+        carousel.addEventListener('mouseenter', () => this.stopAutoPlay());
+        carousel.addEventListener('mouseleave', () => this.startAutoPlay());
+
+        // Touch support
+        this.addTouchSupport();
+    }
+
+    showSlide(index) {
+        // Hide all slides
+        this.slides.forEach(slide => slide.classList.remove('active'));
+        this.dots.forEach(dot => dot.classList.remove('active'));
+
+        // Show current slide
+        this.slides[index].classList.add('active');
+        this.dots[index].classList.add('active');
+        
+        this.currentSlide = index;
+    }
+
+    nextSlide() {
+        let next = this.currentSlide + 1;
+        if (next >= this.slides.length) next = 0;
+        this.showSlide(next);
+    }
+
+    prevSlide() {
+        let prev = this.currentSlide - 1;
+        if (prev < 0) prev = this.slides.length - 1;
+        this.showSlide(prev);
+    }
+
+    goToSlide(index) {
+        this.showSlide(index);
+    }
+
+    startAutoPlay() {
+        this.interval = setInterval(() => {
+            this.nextSlide();
+        }, 5000); // Change slide every 5 seconds
+    }
+
+    stopAutoPlay() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+    }
+
+    addTouchSupport() {
+        const carousel = document.querySelector('.hero-carousel');
+        let startX = 0;
+        let endX = 0;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        carousel.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            this.handleSwipe(startX, endX);
+        });
+    }
+
+    handleSwipe(startX, endX) {
+        const diff = startX - endX;
+        const minSwipe = 50; // Minimum swipe distance
+
+        if (Math.abs(diff) > minSwipe) {
+            if (diff > 0) {
+                this.nextSlide(); // Swipe left
+            } else {
+                this.prevSlide(); // Swipe right
+            }
+        }
+    }
+}
+
+// Inicializar carrusel cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.heroCarousel = new HeroCarousel();
+    
+    // Animaciones de scroll para las nuevas secciones
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos para animar
+    document.querySelectorAll('.category-card, .feature-card-enhanced, .testimonial-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+});
+</script>
 {% endblock %}

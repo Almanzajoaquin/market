@@ -1,12 +1,85 @@
 {% extends 'marketplace/base.html' %}
 
 {% block content %}
-<div class="container text-center mt-5">
-    <div class="alert alert-success">
-        <h2>¡Pago Exitoso! ✅</h2>
-        <p>Tu pago se ha procesado correctamente.</p>
-        <p>Recibirás un email con los detalles de tu compra.</p>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-success">
+                <div class="card-body text-center py-5">
+                    <!-- Icono de Éxito -->
+                    <div class="payment-status-icon mb-4">
+                        <i class="fas fa-check-circle fa-4x text-success"></i>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h2 class="card-title text-success mb-3">¡Pago Exitoso!</h2>
+                    
+                    <!-- Mensaje -->
+                    <p class="card-text text-muted mb-4">
+                        Tu pedido ha sido confirmado y está siendo procesado.
+                        Recibirás un email con los detalles de tu compra en breve.
+                    </p>
+
+                    <!-- Información del Pago -->
+                    {% if payment_id %}
+                    <div class="payment-info bg-light p-3 rounded mb-4">
+                        <small class="text-muted">
+                            <strong>ID de pago:</strong> {{ payment_id }}<br>
+                            <strong>Estado:</strong> {{ status|default:"Aprobado" }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Resumen Rápido -->
+                    <div class="order-summary bg-success bg-opacity-10 p-3 rounded mb-4">
+                        <h6 class="mb-3">Resumen de tu pedido:</h6>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="summary-item">
+                                    <div class="summary-value text-success fw-bold">Confirmado</div>
+                                    <small class="text-muted">Estado</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="summary-item">
+                                    <div class="summary-value text-success fw-bold">24-48h</div>
+                                    <small class="text-muted">Envío estimado</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="summary-item">
+                                    <div class="summary-value text-success fw-bold">Email</div>
+                                    <small class="text-muted">Confirmación</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="payment-actions">
+                        <a href="{% url 'order_history' %}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-shopping-bag me-2"></i>
+                            Ver Mis Pedidos
+                        </a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Seguir Comprando
+                        </a>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="additional-info mt-4 pt-3 border-top">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            ¿Tienes preguntas? 
+                            <a href="{% url 'contacto' %}" class="text-decoration-none">
+                                Contáctanos
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <a href="{% url 'product_list' %}" class="btn btn-primary">Seguir Comprando</a>
 </div>
 {% endblock %}

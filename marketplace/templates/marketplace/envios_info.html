@@ -1,398 +1,458 @@
+<!-- En: market/marketplace/templates/marketplace/envios_info.html -->
 {% extends 'marketplace/base.html' %}
-
-{% block title %}Información de Envíos - Masivo Tech{% endblock %}
+{% load static %}
 
 {% block extra_css %}
 <style>
-    .hero-shipping {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), 
-                    url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        color: white;
-        padding: 100px 0;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .gaming-badge {
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-weight: bold;
-        border: 2px solid #ffd700;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    }
-    
-    .step-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-    
-    .step-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
-        border: 1px solid rgba(255, 215, 0, 0.5);
-    }
-    
-    .step-number {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1.3rem;
-        margin: 0 auto 20px;
-        border: 2px solid #ffd700;
-    }
-    
-    .zone-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .zone-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-    }
-    
-    .zone-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
-    }
-    
-    .zone-icon {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-        display: inline-block;
-        padding: 15px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: 2px solid #ffd700;
-    }
-    
-    .price-tag {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #2c3e50;
-        margin: 15px 0;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-    
-    .feature-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 25px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-    
-    .feature-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(255, 215, 0, 0.3);
-    }
-    
-    .feature-icon {
-        font-size: 2rem;
-        margin-bottom: 15px;
-        display: inline-block;
-        padding: 12px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: 2px solid #ffd700;
-    }
-    
-    .cta-section {
-        background: linear-gradient(rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)), 
-                    url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-        background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 60px 0;
-        border-radius: 20px;
-        margin: 60px 0;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-    }
-    
-    .pulse-animation {
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    .section-title {
-        color: #2c3e50;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-    
-    .gaming-btn {
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        border: 2px solid #ffd700;
-        color: white;
-        font-weight: bold;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        transition: all 0.3s ease;
-    }
-    
-    .gaming-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-        color: white;
-    }
-    
-    body {
-        background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)), 
-                    url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center;
-    }
-    
-    main {
-        background: transparent;
-    }
-    
-    .accordion-item {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .text-muted {
-        color: #6c757d !important;
-    }
+.hero-envios {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.envios-badge-main {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.envios-counter {
+    margin: 1.5rem 0;
+}
+
+.counter-item {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.counter-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.counter-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.envios-highlight {
+    background: #f8f9fa;
+    padding: 1.5rem 0;
+    margin: 2rem 0;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+
+/* Zonas con un toque especial */
+.zonas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.zona-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border: 2px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.zona-card:hover {
+    border-color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.zona-icon {
+    width: 60px;
+    height: 60px;
+    background: #000;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.zona-nombre {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.zona-precio {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #000;
+    margin: 0.5rem 0;
+}
+
+.zona-tiempo {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.zona-ejemplos {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+/* Proceso simple pero bonito */
+.proceso-envios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+}
+
+.paso {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.paso:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.paso-numero {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+
+.paso h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.paso p {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Features simples */
+.features-envios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.feature-envio {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border-left: 3px solid #000;
+}
+
+.feature-icon-envio {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.feature-content h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.feature-content p {
+    color: #666;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* CTA simple */
+.cta-envios {
+    background: #000;
+    color: white;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.cta-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-text {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section Épica -->
-<section class="hero-shipping">
+<!-- Hero Envíos -->
+<section class="hero-envios">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-3 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">🚚 ENVÍOS GAMER</h1>
-                <p class="lead mb-4 fs-4" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">Llevamos tu equipamiento gaming como un campeón levanta su trofeo</p>
-                <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
-                    <span class="gaming-badge">🎮 ENTREGA EXPRESS</span>
-                    <span class="gaming-badge">⚡ VELOCIDAD PRO</span>
-                    <span class="gaming-badge">🏆 CALIDAD GAMER</span>
+        <div class="row">
+            <div class="col-12">
+                <div class="envios-badge-main">
+                    <i class="fas fa-shipping-fast me-1"></i>
+                    ENVÍOS EXPRESS
                 </div>
-                <a href="{% url 'cart_detail' %}" class="btn gaming-btn btn-lg px-5 py-3 pulse-animation">
-                    <i class="fas fa-bolt me-2"></i>CALCULAR ENVÍO
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Cómo Calcular Envío -->
-<section class="container mb-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2 class="display-5 fw-bold mb-3 section-title">¿CÓMO CALCULAR TU ENVÍO?</h2>
-            <p class="lead text-muted">Tan fácil como ganar una ranked</p>
-        </div>
-    </div>
-    
-    <div class="row g-4">
-        <div class="col-lg-3 col-md-6">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h4 class="text-dark">Elige tu Gear</h4>
-                <p class="text-muted">Selecciona los periféricos de tus sueños</p>
-                <div class="mt-3">
-                    <i class="fas fa-mouse fa-2x text-primary"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h4 class="text-dark">Al Carrito</h4>
-                <p class="text-muted">Revisa tu loadout en el carrito</p>
-                <div class="mt-3">
-                    <i class="fas fa-shopping-cart fa-2x text-success"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h4 class="text-dark">Tu Código</h4>
-                <p class="text-muted">Ingresa tu código postal</p>
-                <div class="mt-3">
-                    <i class="fas fa-map-marked-alt fa-2x text-warning"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h4 class="text-dark">¡Victory!</h4>
-                <p class="text-muted">Obtén tu precio de envío al instante</p>
-                <div class="mt-3">
-                    <i class="fas fa-trophy fa-2x text-danger"></i>
+                <h1 class="h2 fw-bold mb-2">🚚 Tu Gaming, Rápido</h1>
+                <p class="lead mb-3">Entregamos tu equipo donde estés</p>
+                
+                <div class="envios-counter">
+                    <div class="counter-item">
+                        <span class="counter-number">3</span>
+                        <span class="counter-label">zonas de envío</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Zonas y Precios -->
-<section class="container mb-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2 class="display-5 fw-bold mb-3 section-title">📍 ZONAS DE ENVÍO</h2>
-            <p class="lead text-muted">Cobertura nacional con precios competitivos</p>
+<!-- Zonas de Envío -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="h4 fw-bold mb-2">Precios por Zona</h2>
+                <p class="text-muted">Calculamos el mejor envío para vos</p>
+            </div>
         </div>
-    </div>
-    
-    <div class="row g-4">
-        {% for zone in shipping_zones %}
-        <div class="col-lg-4 col-md-6">
-            <div class="zone-card">
-                <div class="zone-icon">
-                    {% if zone.zona == 'CABA' %}
-                    <i class="fas fa-skyscraper"></i>
-                    {% elif zone.zona == 'GBA' %}
-                    <i class="fas fa-house-user"></i>
-                    {% else %}
-                    <i class="fas fa-globe-americas"></i>
-                    {% endif %}
+        
+        <div class="zonas-grid">
+            <!-- CABA -->
+            <div class="zona-card">
+                <div class="zona-icon">
+                    <i class="fas fa-building"></i>
                 </div>
-                <h3 class="fw-bold text-dark">{{ zone.zona }}</h3>
-                <div class="price-tag">{{ zone.precio }}</div>
-                <p class="text-muted mb-3">
-                    <i class="fas fa-stopwatch me-2"></i><strong>{{ zone.tiempo }}</strong> hábiles
+                <h3 class="zona-nombre">CABA</h3>
+                <div class="zona-precio">$1.500</div>
+                <p class="zona-tiempo">
+                    <i class="fas fa-bolt me-1"></i>
+                    24-48 horas
                 </p>
-                <div class="bg-light p-3 rounded">
-                    <small class="text-muted">
-                        <i class="fas fa-bullseye me-2"></i><strong>Ejemplos:</strong> {{ zone.ejemplos }}
+                <div class="zona-ejemplos">
+                    <small>
+                        <i class="fas fa-map-pin me-1"></i>
+                        1001, 1425, 1876
+                    </small>
+                </div>
+            </div>
+            
+            <!-- GBA -->
+            <div class="zona-card">
+                <div class="zona-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3 class="zona-nombre">GBA</h3>
+                <div class="zona-precio">$2.000</div>
+                <p class="zona-tiempo">
+                    <i class="fas fa-clock me-1"></i>
+                    48-72 horas
+                </p>
+                <div class="zona-ejemplos">
+                    <small>
+                        <i class="fas fa-map-pin me-1"></i>
+                        1600, 1700, 1754
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Interior -->
+            <div class="zona-card">
+                <div class="zona-icon">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h3 class="zona-nombre">Interior</h3>
+                <div class="zona-precio">$3.500</div>
+                <p class="zona-tiempo">
+                    <i class="fas fa-truck me-1"></i>
+                    5-7 días
+                </p>
+                <div class="zona-ejemplos">
+                    <small>
+                        <i class="fas fa-map-pin me-1"></i>
+                        5000, 8000, 9400
                     </small>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 </section>
 
-<!-- Características Gamer -->
-<section class="container mb-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2 class="display-5 fw-bold mb-3 section-title">⭐ POR QUÉ ELEGIRNOS</h2>
-            <p class="lead text-muted">Ventajas level pro para gamers</p>
+<!-- Proceso de Envío -->
+<section class="main-content py-4 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="h4 fw-bold mb-2">¿Cómo Funciona?</h2>
+                <p class="text-muted">Simple y sin complicaciones</p>
+            </div>
+        </div>
+        
+        <div class="proceso-envios">
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <h5>Elegí tus productos</h5>
+                <p>Agregá al carrito todo lo que necesites para tu setup gaming</p>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <h5>Calculá el envío</h5>
+                <p>Ingresá tu código postal y te mostramos el costo al instante</p>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <h5>¡Recibí tu pedido!</h5>
+                <p>Te lo llevamos hasta la puerta de tu casa con todo el cuidado</p>
+            </div>
         </div>
     </div>
-    
-    <div class="row g-4 justify-content-center">
-        <!-- Solo 2 características ahora -->
-        <div class="col-lg-5 col-md-6">
-            <div class="feature-card">
-                <div class="feature-icon">
+</section>
+
+<!-- Features -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="features-envios">
+            <div class="feature-envio">
+                <div class="feature-icon-envio">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h4 class="text-dark">Protección Max</h4>
-                <p class="text-muted">Embalaje anti-impacto para tu gear gaming</p>
+                <div class="feature-content">
+                    <h5>Embalaje Seguro</h5>
+                    <p>Protegemos tus productos con materiales especiales</p>
+                </div>
             </div>
-        </div>
-        <div class="col-lg-5 col-md-6">
-            <div class="feature-card">
-                <div class="feature-icon">
+            <div class="feature-envio">
+                <div class="feature-icon-envio">
                     <i class="fas fa-shipping-fast"></i>
                 </div>
-                <h4 class="text-dark">Flash Delivery</h4>
-                <p class="text-muted">Despacho express para que no pierdas tiempo</p>
+                <div class="feature-content">
+                    <h5>Envío Express</h5>
+                    <p>Despachamos en 24 horas hábiles</p>
+                </div>
+            </div>
+            <div class="feature-envio">
+                <div class="feature-icon-envio">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h5>Soporte Dedicado</h5>
+                    <p>Asistencia personalizada para tu envío</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section">
+<!-- Banner Promocional -->
+<section class="envios-highlight">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-8 text-center text-lg-start">
-                <h2 class="display-6 fw-bold mb-3">¿LISTO PARA EL NEXT LEVEL?</h2>
-                <p class="lead mb-4">Calcula tu envío y lleva tu gaming al máximo</p>
+            <div class="col-md-8">
+                <h4 class="h5 mb-1">🎮 Envío gratis +$50.000</h4>
+                <p class="text-muted mb-0">Aprovechá esta promoción especial para gamers</p>
             </div>
-            <div class="col-lg-4 text-center">
-                <a href="{% url 'cart_detail' %}" class="btn btn-outline-light btn-lg px-5 py-3 gaming-btn">
-                    <i class="fas fa-gamepad me-2"></i>CALCULAR AHORA
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'cart_detail' %}" class="btn btn-dark btn-sm">
+                    <i class="fas fa-calculator me-1"></i>Calcular Envío
                 </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- FAQ Section -->
-<section class="container mb-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3 section-title">❔ FAQ - PREGUNTAS CLÁSICAS</h2>
+<!-- CTA Final -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="cta-envios">
+            <h3 class="cta-title">¿Listo para Comprar?</h3>
+            <p class="cta-text">Calculá tu envío directamente desde el carrito y recibí tus productos lo antes posible</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="{% url 'cart_detail' %}" class="btn btn-light">
+                    <i class="fas fa-calculator me-2"></i>Calcular Envío
+                </a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-light">
+                    <i class="fas fa-shopping-bag me-2"></i>Ver Productos
+                </a>
             </div>
-            
-            <div class="accordion" id="shippingFAQ">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            🎯 ¿Qué tan rápido llega mi pedido?
-                        </button>
-                    </h2>
-                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#shippingFAQ">
-                        <div class="accordion-body">
-                            <strong>Velocidad pro-gamer:</strong> CABA 24-48h, GBA 48-72h, Interior 5-7 días hábiles. Pedidos antes de las 14hs tienen prioridad.
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Simple -->
+<section class="main-content py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="h5 fw-bold mb-3">Preguntas Frecuentes</h3>
+                <div class="accordion" id="faqEnvios">
+                    <div class="accordion-item">
+                        <h4 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ¿Qué tan rápido llega mi pedido?
+                            </button>
+                        </h4>
+                        <div id="faq1" class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+                                <strong>🚀 CABA:</strong> 24-48 horas<br>
+                                <strong>⏱️ GBA:</strong> 48-72 horas<br>
+                                <strong>🗺️ Interior:</strong> 5-7 días
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            🛡️ ¿El embalaje es seguro para productos gaming?
-                        </button>
-                    </h2>
-                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#shippingFAQ">
-                        <div class="accordion-body">
-                            <strong>Totalmente:</strong> Usamos cajas reforzadas, burbujas de aire y esquineros para proteger teclados, mouses y monitores. Tu gear llega impecable.
+                    <div class="accordion-item">
+                        <h4 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                ¿Hacen envíos a todo el país?
+                            </button>
+                        </h4>
+                        <div id="faq2" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                ¡Sí! Llegamos a todas las provincias de Argentina. Solo ingresá tu código postal en el carrito.
+                            </div>
                         </div>
                     </div>
                 </div>

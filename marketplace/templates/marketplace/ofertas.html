@@ -1,108 +1,185 @@
 {% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.hero-ofertas {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.offer-badge-main {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.offers-counter {
+    margin: 1.5rem 0;
+}
+
+.counter-item {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.counter-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.counter-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.offer-highlight {
+    background: #f8f9fa;
+    padding: 1.5rem 0;
+    margin: 2rem 0;
+}
+
+.price-comparison {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.old-price {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background: #dc3545;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Hero Section Ofertas -->
+<!-- Hero Ofertas -->
 <section class="hero-ofertas">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-4 mb-3">🔥 OFERTAS ESPECIALES</h1>
-                <p class="lead">Descuentos exclusivos en los mejores periféricos gaming</p>
+            <div class="col-12">
+                <div class="offer-badge-main">
+                    <i class="fas fa-bolt me-1"></i>
+                    OFERTAS ESPECIALES
+                </div>
+                <h1 class="h2 fw-bold mb-2">Ofertas Gaming</h1>
+                <p class="lead mb-3">Descuentos exclusivos en periféricos</p>
+                
+                <div class="offers-counter">
+                    <div class="counter-item">
+                        <span class="counter-number">{{ productos_oferta.count }}</span>
+                        <span class="counter-label">productos en oferta</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Ofertas Destacadas -->
-<section class="py-5">
+<!-- Productos en Oferta -->
+<section class="main-content py-4">
     <div class="container">
-        <div class="row mb-5">
-            <div class="col-12">
-                <h2 class="section-title">PRODUCTOS EN OFERTA</h2>
-                <p class="text-center text-muted">Aprovecha estos precios especiales por tiempo limitado</p>
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="h4 fw-bold mb-2">Productos Destacados</h2>
+                <p class="text-muted small">Precios especiales por tiempo limitado</p>
             </div>
         </div>
         
-        <div class="row">
+        <div class="products-grid">
             {% for product in productos_oferta %}
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card offer-card" data-product-id="{{ product.id }}">
-                    <div class="offer-badge">OFERTA</div>
-                    
-                    <!-- Enlace para ver detalles -->
-                    <a href="{% url 'product_detail' product.id %}" class="product-link">
-                        <div class="product-image">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                            {% else %}
-                                <i class="fas fa-image fa-3x text-muted"></i>
-                            {% endif %}
-                            
-                            <!-- Alertas de stock como texto -->
-                            {% if product.stock <= 0 %}
-                            <div class="stock-alert out-of-stock">
-                                <i class="fas fa-ban"></i>
-                                <span>AGOTADO</span>
-                            </div>
-                            {% elif product.stock < 5 %}
-                            <div class="stock-alert low-stock">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>POCO STOCK</span>
-                            </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="product-info">
-                            <div class="product-category">{{ product.get_category_display }}</div>
-                            <h3 class="product-title">{{ product.name }}</h3>
-                            
-                            <div class="price-container">
-                                <span class="old-price">${{ product.price|add:5000|floatformat:0 }}</span>
-                                <span class="product-price">{{ product.get_price_in_pesos }}</span>
-                            </div>
-                        </div>
-                    </a>
-                    
-                    <!-- Botón Agregar con AJAX - IMPORTANTE: data-product-id y clase correcta -->
-                    <div class="product-actions">
-                        {% if product.stock > 0 %}
-                        <button type="button" class="btn btn-primary w-100 add-to-cart-btn" 
-                                data-product-id="{{ product.id }}">
-                            <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
-                        </button>
+            <div class="product-card">
+                <div class="position-absolute top-0 start-0 m-2">
+                    <span class="badge bg-dark text-white small">
+                        <i class="fas fa-tag me-1"></i>OFERTA
+                    </span>
+                </div>
+                
+                <a href="{% url 'product_detail' product.id %}" class="product-image-link">
+                    <div class="product-image-wrapper">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
                         {% else %}
-                        <button class="btn btn-secondary w-100" disabled>
-                            <i class="fas fa-times me-2"></i>AGOTADO
-                        </button>
+                            <div class="product-image-placeholder">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
                         {% endif %}
                     </div>
+                    
+                    <div class="product-info">
+                        <div class="product-category small">{{ product.get_category_display }}</div>
+                        <h3 class="product-title">{{ product.name|truncatewords:4 }}</h3>
+                        
+                        <div class="price-comparison">
+                            <span class="old-price">${{ product.price|add:3000|floatformat:0 }}</span>
+                            <span class="product-price">{{ product.get_price_in_pesos }}</span>
+                            <span class="discount-badge">-20%</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <div class="product-actions">
+                    {% if product.stock > 0 %}
+                    <button type="button" class="btn btn-dark btn-sm w-100 add-to-cart-btn" 
+                            data-product-id="{{ product.id }}">
+                        <i class="fas fa-cart-plus me-1"></i>Agregar
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline-dark btn-sm w-100" disabled>
+                        <i class="fas fa-times me-1"></i>Agotado
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Próximamente tendremos nuevas ofertas especiales.
+            <div class="col-12 text-center py-4">
+                <div class="empty-state">
+                    <i class="fas fa-tag fa-2x text-muted mb-3"></i>
+                    <h4 class="h5">No hay ofertas disponibles</h4>
+                    <p class="text-muted small mb-3">Próximamente tendremos nuevas promociones</p>
+                    <a href="{% url 'product_list' %}" class="btn btn-dark btn-sm">
+                        Ver Catálogo
+                    </a>
                 </div>
-                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
-                    Ver Todos los Productos
-                </a>
             </div>
             {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- Banner Ofertas -->
-<section class="py-5 bg-dark text-white">
+<!-- Banner Promocional -->
+<section class="offer-highlight">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h3>🚚 ENVÍO GRATIS</h3>
-                <p class="mb-0">En compras superiores a $50.000 - ¡Aprovecha esta oferta!</p>
+                <h4 class="h5 mb-1">🚚 Envío gratis +$50.000</h4>
+                <p class="text-muted small mb-0">Aprovecha esta promoción por tiempo limitado</p>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Comprar Ahora</a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-dark btn-sm">
+                    <i class="fas fa-bolt me-1"></i>Ver Productos
+                </a>
             </div>
         </div>
     </div>

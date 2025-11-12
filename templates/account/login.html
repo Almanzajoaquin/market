@@ -1,53 +1,164 @@
 {% extends "marketplace/base.html" %}
 {% load crispy_forms_tags %}
 
+{% block extra_css %}
+<style>
+.hero-auth {
+    background: #000;
+    color: white;
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.auth-badge {
+    background: #fff;
+    color: #000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+    margin: 2rem auto;
+    max-width: 400px;
+}
+
+.auth-header {
+    background: #000;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.auth-body {
+    padding: 2rem;
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e5e5;
+}
+
+.auth-divider span {
+    background: white;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn-google {
+    background: white;
+    color: #333;
+    border: 1px solid #e5e5e5;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.btn-google:hover {
+    border-color: #000;
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #333;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+<!-- Hero Auth -->
+<section class="hero-auth">
+    <div class="container">
+        {% comment %} quitar 
+        <div class="auth-badge">
+            <i class="fas fa-sign-in-alt me-1"></i>
+            INICIAR SESIÓN
+        </div> 
+        {% endcomment %}
+        <h1 class="h2 fw-bold mb-2">Bienvenido de nuevo</h1>
+        <p class="lead mb-3">Accedé a tu cuenta Masivo Tech</p>
+    </div>
+</section>
+
+<!-- Login Form -->
+<section class="main-content py-4">
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h4 class="mb-0">Ingresá a tu cuenta</h4>
+            </div>
+            
+            <div class="auth-body">
+                <!-- Formulario de Login Normal -->
+                <form method="post" action="{% url 'account_login' %}">
+                    {% csrf_token %}
                     
-                    <!-- Form de Login de Allauth -->
-                    <form method="post" action="{% url 'account_login' %}">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        
-                        {% if redirect_field_value %}
-                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                        {% endif %}
-                        
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
-                        
-                        <div class="text-center">
-                            <a href="{% url 'account_reset_password' %}" class="text-decoration-none">
-                                ¿Olvidaste tu contraseña?
-                            </a>
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <!-- Login con Google -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email</label>
+                        <input type="email" name="login" class="form-control form-control-sm" placeholder="tu@email.com" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Contraseña</label>
+                        <input type="password" name="password" class="form-control form-control-sm" placeholder="Tu contraseña" required>
+                    </div>
+                    
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-dark w-100 mb-3 py-2">
+                        <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                    </button>
+                    
                     <div class="text-center">
-                        <p class="mb-3">O inicia sesión con:</p>
-                        <a href="{% url 'google_login' %}" class="btn btn-outline-danger w-100">
-                            <i class="fab fa-google me-2"></i>Google
+                        <a href="{% url 'account_reset_password' %}" class="text-muted small">
+                            ¿Olvidaste tu contraseña?
                         </a>
                     </div>
+                </form>
+                    
+                <div class="auth-divider">
+                    <span>o continuá con</span>
+                </div>
 
-                    <hr class="my-4">
+                <!-- Login con Google -->
+            <div class="text-center">
+                <p class="mb-3">O inicia sesión con:</p>
+                <a href="/accounts/google/login/" class="btn btn-outline-danger w-100">
+                    <i class="fab fa-google me-2"></i>Google
+                </a>
+            </div>
 
-                    <!-- Link a Registro -->
-                    <div class="text-center">
-                        <p>¿No tienes cuenta? 
-                            <a href="{% url 'account_signup' %}" class="text-decoration-none">Regístrate aquí</a>
-                        </p>
-                    </div>
+                <div class="text-center">
+                    <p class="mb-0 small">
+                        ¿No tenés cuenta? 
+                        <a href="{% url 'account_signup' %}" class="text-dark fw-bold">Registrate aquí</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
