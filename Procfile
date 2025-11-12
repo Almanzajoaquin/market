@@ -1,0 +1,1 @@
+web: gunicorn masivo_tech.wsgi
