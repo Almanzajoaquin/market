@@ -9,3 +9,7 @@ python manage.py migrate --noinput
 
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
+
+echo "Create Admin"
+python manage.py shell < create_superuser.py
+

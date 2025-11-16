@@ -162,7 +162,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@masivotech.com"
 
 
-
 # =============================================================================
 # CONFIGURACIÓN DE INTERNATIONALIZATION
 # =============================================================================
