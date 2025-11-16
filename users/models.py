@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
@@ -17,6 +18,8 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
+    objects = CustomUserManager()   # ← ESTE ERA EL FALTANTE
+
     def __str__(self):
         return self.email
     def get_display_name(self):
