@@ -108,23 +108,6 @@ WSGI_APPLICATION = 'masivo_tech.wsgi.application'
 # CONFIGURACIÓN DE BASE DE DATOS
 # =============================================================================
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.getenv('DATABASE_URL'),
-#         conn_max_age=600,
-#         ssl_require=True
-#     )
-#     #'default': dj_database_url.config(
-#     #    default=f"sqlite:///{BASE_DIR / 'db.slite3'}",
-#     #    conn_max_age=600
-#     #)
-    
-#     # 'default': {
-#     #     'ENGINE': 'django.db.backends.sqlite3',
-#     #     'NAME': BASE_DIR / 'db.sqlite3',
-#     #}
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -168,6 +151,17 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 # Configuración de registro
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+
+# =============================================================================
+# CONFIGURACIÓN DE EMAIL (DESACTIVADO PARA RENDER)
+# =============================================================================
+
+# Evita que Django intente conectarse a un servidor SMTP real.
+# Los mails se imprimirán en la consola de Render en los logs.
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@masivotech.com"
+
+
 
 # =============================================================================
 # CONFIGURACIÓN DE INTERNATIONALIZATION
@@ -282,7 +276,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # URL base para callbacks
-BASE_URL = 'http://127.0.0.1:8000'
+#BASE_URL = 'http://127.0.0.1:8000'
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000") # <-- render
 
 # Configuración del admin dashboard
 ADMIN_DASHBOARD = True
