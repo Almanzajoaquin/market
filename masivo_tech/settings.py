@@ -66,6 +66,11 @@ INSTALLED_APPS = [
     'marketplace',
     'users',
     'chat',
+
+    # ...
+    'cloudinary',
+    'cloudinary_storage',
+    # ...
 ]
 
 MIDDLEWARE = [
@@ -183,8 +188,25 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Archivos media
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = BASE_DIR / 'media'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# =============================================================================
+# CONFIGURACION PARA CLOUDINARY
+# =============================================================================
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config( 
+  cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+  api_key=os.getenv('CLOUDINARY_API_KEY'), 
+  api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # =============================================================================
 # CONFIGURACIÓN DE TEMPLATES
