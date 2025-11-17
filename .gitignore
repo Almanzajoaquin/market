@@ -10,6 +10,7 @@ venv/
 
 # Variables de entorno
 .env
+.envRENDER
 *.env
 .env.local
 

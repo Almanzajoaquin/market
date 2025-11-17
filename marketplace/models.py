@@ -54,6 +54,8 @@ class Product(models.Model):
         upload_to='products/',
         verbose_name="Imagen",
         help_text="Imagen principal del producto"
+        blank=True,
+        null=True
     )
     
     # Gestión de inventario
