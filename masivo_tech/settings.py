@@ -3,13 +3,25 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url # -> RENDER
-# --------> Cloud
+
+# CLOUDINARY DEBE ESTAR ARRIBA DE TODO 
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Cargar variables de entorno
 load_dotenv()
+
+cloudinary.config( 
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'), 
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,7 +67,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    
+
+    #Cloudinary
+    'cloudinary',
+    'cloudinary_storage',
+
     # Apps de terceros
     'crispy_forms',
     'crispy_bootstrap5',
@@ -70,11 +86,6 @@ INSTALLED_APPS = [
     'marketplace',
     'users',
     'chat',
-
-    # ...
-    'cloudinary',
-    'cloudinary_storage',
-    # ...
 ]
 
 MIDDLEWARE = [
@@ -210,21 +221,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # =============================================================================
 # CONFIGURACION PARA CLOUDINARY - DEBUG
 # =============================================================================
-
-print("=== CLOUDINARY DEBUG ===")
-print("CLOUD_NAME:", os.getenv('CLOUDINARY_CLOUD_NAME'))
-print("API_KEY:", os.getenv('CLOUDINARY_API_KEY')[:10] + "..." if os.getenv('CLOUDINARY_API_KEY') else "None")
-print("API_SECRET:", os.getenv('CLOUDINARY_API_SECRET')[:10] + "..." if os.getenv('CLOUDINARY_API_SECRET') else "None")
-
-cloudinary.config( 
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'), 
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-print("DEFAULT_FILE_STORAGE:", DEFAULT_FILE_STORAGE)
-print("=== FIN DEBUG ===")
 
 # =============================================================================
 # CONFIGURACIÓN DE TEMPLATES
