@@ -200,13 +200,31 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # CONFIGURACION PARA CLOUDINARY
 # =============================================================================
 
+# cloudinary.config( 
+#   cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+#   api_key=os.getenv('CLOUDINARY_API_KEY'), 
+#   api_secret=os.getenv('CLOUDINARY_API_SECRET')
+# )
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# =============================================================================
+# CONFIGURACION PARA CLOUDINARY - DEBUG
+# =============================================================================
+
+print("=== CLOUDINARY DEBUG ===")
+print("CLOUD_NAME:", os.getenv('CLOUDINARY_CLOUD_NAME'))
+print("API_KEY:", os.getenv('CLOUDINARY_API_KEY')[:10] + "..." if os.getenv('CLOUDINARY_API_KEY') else "None")
+print("API_SECRET:", os.getenv('CLOUDINARY_API_SECRET')[:10] + "..." if os.getenv('CLOUDINARY_API_SECRET') else "None")
 
 cloudinary.config( 
-  cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-  api_key=os.getenv('CLOUDINARY_API_KEY'), 
-  api_secret=os.getenv('CLOUDINARY_API_SECRET')
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'), 
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+print("DEFAULT_FILE_STORAGE:", DEFAULT_FILE_STORAGE)
+print("=== FIN DEBUG ===")
 
 # =============================================================================
 # CONFIGURACIÓN DE TEMPLATES
