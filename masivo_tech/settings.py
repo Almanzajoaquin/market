@@ -3,6 +3,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url # -> RENDER
+# --------> Cloud
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Cargar variables de entorno
 load_dotenv()
@@ -196,16 +200,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # CONFIGURACION PARA CLOUDINARY
 # =============================================================================
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 cloudinary.config( 
   cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
   api_key=os.getenv('CLOUDINARY_API_KEY'), 
   api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
-
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # =============================================================================
