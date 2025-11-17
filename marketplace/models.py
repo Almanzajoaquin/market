@@ -53,7 +53,7 @@ class Product(models.Model):
     image = models.ImageField(
         upload_to='products/',
         verbose_name="Imagen",
-        help_text="Imagen principal del producto",
+        help_text="Imagen principal del producto", # FALTO LA COMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         blank=True,
         null=True
     )
