@@ -2,13 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from .managers import CustomUserManager
 
+from cloudinary_storage.storage import MediaCloudinaryStorage
+import cloudinary_storage
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/',
                                         blank=True,
                                         null=True,
-                                        default='profile_pics/default_avatar.png')
+                                        default='profile_pics/default_avatar.png',
+                                        storage=MediaCloudinaryStorage())
     date_of_birth = models.DateField(blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

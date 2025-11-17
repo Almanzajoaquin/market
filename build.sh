@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
+echo "=== CLEANING CACHE ==="
+find . -name "*.pyc" -delete
+find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
-# DEBUG CLOUDINARY
-echo "=== CLOUDINARY DEBUG ==="
+echo "=== CLOUDINARY FORCE RESET ==="
 python -c "
 import os
-print('CLOUD_NAME:', os.getenv('CLOUDINARY_CLOUD_NAME'))
-print('API_KEY:', os.getenv('CLOUDINARY_API_KEY')[:10] + '...' if os.getenv('CLOUDINARY_API_KEY') else 'None')
-print('API_SECRET:', os.getenv('CLOUDINARY_API_SECRET')[:10] + '...' if os.getenv('CLOUDINARY_API_SECRET') else 'None')
+print('CLOUDINARY ACTIVE:', bool(os.getenv('CLOUDINARY_CLOUD_NAME')))
 "
 
 echo "Make Migrations..."
