@@ -5,6 +5,9 @@ from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+from cloudinary.models import CloudinaryField
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 # Obtener el modelo de usuario de forma compatible
 User = get_user_model()
 
@@ -50,14 +53,26 @@ class Product(models.Model):
         help_text="Categoría del producto"
     )
     
+    # image = models.ImageField(
+    #     upload_to='products/',
+    #     verbose_name="Imagen",
+    #     help_text="Imagen principal del producto",
+    #     blank=True,
+    #     null=True
+    # )
+    # image = CloudinaryField(
+    # 'image',
+    # folder='products/',
+    # blank=True,
+    # null=True
+    # )
     image = models.ImageField(
-        upload_to='products/',
-        verbose_name="Imagen",
-        help_text="Imagen principal del producto",
-        blank=True,
-        null=True
+    upload_to='products/',
+    storage=MediaCloudinaryStorage(),
+    blank=True,
+    null=True
     )
-    
+
     # Gestión de inventario
     stock = models.PositiveIntegerField(
         default=0,
