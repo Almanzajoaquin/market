@@ -328,3 +328,5 @@ ADMIN_DASHBOARD = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#
