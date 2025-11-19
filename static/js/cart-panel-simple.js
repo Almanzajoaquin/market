@@ -9,14 +9,12 @@ class CartPanelSimple {
     init() {
         if (this.initialized) return;
         
-        console.log('🛒 Inicializando CartPanelSimple...');
         this.bindEvents();
         this.loadInitialCart();
         this.initialized = true;
     }
 
     async loadInitialCart() {
-        console.log('📥 CartPanelSimple: Cargando carrito inicial...');
         await this.reloadCartPanel();
     }
 
@@ -48,13 +46,10 @@ class CartPanelSimple {
 
         // Escuchar cuando se agregan productos al carrito
         document.addEventListener('masivotech:cartPanelUpdate', () => {
-            console.log('🔄 CartPanelSimple: Recibió actualización del cart manager');
             this.reloadCartPanel();
         });
 
-        // También escuchar el evento general de cart update
-        document.addEventListener('masivotech:cartUpdate', (e) => {
-            console.log('🔄 CartPanelSimple: Cart update recibido', e.detail);
+        document.addEventListener('masivotech:cartUpdate', () => {
             this.reloadCartPanel();
         });
 
@@ -72,18 +67,13 @@ class CartPanelSimple {
         const productId = button.dataset.productId;
         const quantityElement = document.getElementById(`quantity${productId}`);
         
-        if (!quantityElement) {
-            console.error('❌ No se encontró elemento de cantidad para producto:', productId);
-            return;
-        }
+        if (!quantityElement) return;
 
         let currentQuantity = parseInt(quantityElement.textContent) || 1;
         let newQuantity = currentQuantity + change;
 
         // Validar límites
         if (newQuantity < 1) newQuantity = 1;
-
-        console.log(`🔄 Actualizando cantidad: ${currentQuantity} → ${newQuantity} para producto ${productId}`);
         
         // Actualizar visualmente inmediatamente
         quantityElement.textContent = newQuantity;
@@ -126,10 +116,8 @@ class CartPanelSimple {
         await this.removeCartItem(productId);
     }
 
-        async updateCartItem(productId, quantity) {
+    async updateCartItem(productId, quantity) {
         try {
-            console.log(`📤 Enviando actualización: Producto ${productId}, Cantidad ${quantity}`);
-            
             const formData = new URLSearchParams();
             formData.append('quantity', quantity);
             formData.append('csrfmiddlewaretoken', this.getCSRFToken());
@@ -145,7 +133,6 @@ class CartPanelSimple {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('✅ Respuesta del servidor:', data);
                 
                 if (data.success) {
                     this.updateCartDisplay(data);
@@ -164,16 +151,13 @@ class CartPanelSimple {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
         } catch (error) {
-            console.error('❌ Error actualizando item:', error);
             MasivoTechUtils.showToast(error.message || 'Error al actualizar el carrito', 'error');
-            this.reloadCartPanel(); // Recargar todo el panel en caso de error
+            this.reloadCartPanel();
         }
     }
 
     async removeCartItem(productId) {
         try {
-            console.log(`📤 Enviando eliminación: Producto ${productId}`);
-            
             const formData = new URLSearchParams();
             formData.append('csrfmiddlewaretoken', this.getCSRFToken());
 
@@ -188,7 +172,6 @@ class CartPanelSimple {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('✅ Respuesta del servidor:', data);
                 
                 if (data.success) {
                     this.updateCartDisplay(data);
@@ -205,15 +188,12 @@ class CartPanelSimple {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
         } catch (error) {
-            console.error('❌ Error eliminando item:', error);
             MasivoTechUtils.showToast(error.message || 'Error al eliminar el producto', 'error');
-            this.reloadCartPanel(); // Recargar todo el panel en caso de error
+            this.reloadCartPanel();
         }
     }
 
-        updateCartDisplay(data) {
-        console.log('📊 Actualizando display del carrito:', data);
-        
+    updateCartDisplay(data) {
         // Actualizar badge del carrito en el header
         const badge = document.querySelector('.cart-badge');
         const panelCount = document.getElementById('cartPanelCount');
@@ -238,11 +218,6 @@ class CartPanelSimple {
             }
         }
 
-        // Actualizar NavigationManager si existe
-        if (window.navigationManager && window.navigationManager.updateCartBadge) {
-            window.navigationManager.updateCartBadge(data.cart_total_items);
-        }
-
         // Notificar al CartManager principal
         if (window.cartManager && window.cartManager.updateGlobalCartBadge) {
             window.cartManager.updateGlobalCartBadge(data.cart_total_items);
@@ -251,16 +226,10 @@ class CartPanelSimple {
 
     async reloadCartPanel() {
         const contentElement = document.getElementById('cartPanelContent');
-        const cartPanel = document.getElementById('cartPanel');
         
-        if (!contentElement) {
-            console.log('❌ CartPanelSimple: No se encontró cartPanelContent');
-            return;
-        }
+        if (!contentElement) return;
 
         try {
-            console.log('🔄 CartPanelSimple: Recargando panel del carrito...');
-            
             const response = await fetch('/carrito/api/panel/');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -269,11 +238,7 @@ class CartPanelSimple {
             const html = await response.text();
             contentElement.innerHTML = html;
             
-            console.log('✅ CartPanelSimple: Panel recargado correctamente');
-            
         } catch (error) {
-            console.error('❌ CartPanelSimple: Error recargando panel:', error);
-            
             // Mostrar error elegante
             contentElement.innerHTML = `
                 <div class="cart-panel-error text-center py-4">
@@ -292,7 +257,6 @@ class CartPanelSimple {
         if (!token && typeof MasivoTechUtils !== 'undefined') {
             token = MasivoTechUtils.getCookie('csrftoken');
         }
-        console.log('🔐 CSRF Token:', token ? 'Encontrado' : 'No encontrado');
         return token;
     }
 

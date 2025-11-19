@@ -14,15 +14,13 @@ class CartManager {
     init() {
         if (this.initialized) return;
 
-        console.log('🛒 Inicializando CartManager...');
         this.cleanupExistingListeners();
         this.bindAddToCartEvents();
         this.initialized = true;
     }
 
     cleanupExistingListeners() {
-        console.log('🧹 Limpiando event listeners anteriores...');
-        
+        // Limpiar event listeners anteriores
         document.querySelectorAll(this.selectors.addButtons).forEach(button => {
             const newButton = button.cloneNode(true);
             button.parentNode.replaceChild(newButton, button);
@@ -35,8 +33,6 @@ class CartManager {
     }
 
     bindAddToCartEvents() {
-        console.log('📌 Vinculando nuevos event listeners...');
-
         document.querySelectorAll(this.selectors.addButtons).forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -124,7 +120,6 @@ class CartManager {
             }
             
         } catch (error) {
-            console.error('❌ Error:', error);
             // ❌ ERROR - Restaurar inmediatamente
             button.innerHTML = originalHTML;
             button.disabled = originalDisabled;

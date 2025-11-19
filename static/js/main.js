@@ -14,8 +14,6 @@ class MasivoTechApp {
      */
     init() {
         if (this.initialized) return;
-
-        console.log('🚀 Iniciando MasivoTech App...');
         
         // Inicializar módulos core que se necesitan en todas las páginas
         this.initCoreModules();
@@ -24,7 +22,6 @@ class MasivoTechApp {
         this.initPageSpecificModules();
         
         this.initialized = true;
-        console.log('✅ MasivoTech App inicializada correctamente');
     }
 
     /**
@@ -33,9 +30,6 @@ class MasivoTechApp {
     initCoreModules() {
         // Tooltips de Bootstrap
         this.initTooltips();
-        
-        // Navegación principal
-        this.initNavigation();
         
         // Sistema de notificaciones
         this.initNotifications();
@@ -47,7 +41,7 @@ class MasivoTechApp {
     initPageSpecificModules() {
         const path = window.location.pathname;
         
-        // Mapeo de rutas a módulos (ACTUALIZADO)
+        // Mapeo de rutas a módulos
         const pageModules = {
             '/carrito/': ['cart'],
             '/productos/': ['cart', 'sorting'],
@@ -61,7 +55,7 @@ class MasivoTechApp {
             .filter(([route]) => path.includes(route))
             .flatMap(([, modules]) => modules);
 
-        // ✅ AGREGAR ESTA PARTE NUEVA para detalle de producto
+        // Para detalle de producto
         if (path.includes('/producto/')) {
             modulesToLoad.push('cart');
             modulesToLoad.push('cartPanel');
@@ -111,13 +105,10 @@ class MasivoTechApp {
             if (module && typeof module.init === 'function') {
                 this.modules.set(moduleName, module);
                 module.init();
-                console.log(`✅ Módulo ${moduleName} cargado`);
-            } else {
-                console.warn(`⚠️ Módulo ${moduleName} no disponible`);
             }
             
         } catch (error) {
-            console.error(`❌ Error cargando módulo ${moduleName}:`, error);
+            // Error silencioso para producción
         }
     }
 
@@ -136,14 +127,6 @@ class MasivoTechApp {
     }
 
     /**
-     * Inicializa la navegación principal
-     */
-    initNavigation() {
-        // La navegación ahora está manejada por navigation.js
-        console.log('🧭 Navegación manejada por NavigationManager');
-    }
-
-    /**
      * Inicializa el sistema de notificaciones
      */
     initNotifications() {
@@ -152,19 +135,6 @@ class MasivoTechApp {
             const { message, type = 'info', duration = 5000 } = e.detail;
             if (typeof MasivoTechUtils !== 'undefined') {
                 MasivoTechUtils.showToast(message, type, duration);
-            }
-        });
-
-        // Escuchar actualizaciones del carrito para notificar
-        document.addEventListener('masivotech:cartUpdate', (e) => {
-            console.log('🛒 Carrito actualizado desde main.js:', e.detail);
-            
-            // Notificar a todos los módulos del carrito
-            if (this.modules.has('cartPanel')) {
-                console.log('🔄 Notificando a CartPanelManager');
-            }
-            if (this.modules.has('cart')) {
-                console.log('🔄 Notificando a CartManager');
             }
         });
     }
@@ -237,110 +207,23 @@ window.dispatchCartUpdate = function(data) {
     window.updateMasivoTechCart(data);
 };
 
-// Exportar para uso global
-window.MasivoTechApp = MasivoTechApp;
-
 // Auto-inicialización de módulos críticos como fallback
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar CartManager como fallback si no se cargó por main.js
     setTimeout(() => {
         if (typeof CartManager !== 'undefined' && !window.masivoTechApp?.getModule('cart')) {
-            console.log('🛒 Inicializando CartManager como fallback...');
             window.cartManager = new CartManager();
             window.cartManager.init();
         }
 
         // Inicializar CartPanelManager como fallback si no se cargó por main.js
         if (typeof CartPanelManager !== 'undefined' && !window.masivoTechApp?.getModule('cartPanel')) {
-            console.log('🛒 Inicializando CartPanelManager como fallback...');
             window.cartPanelManager = new CartPanelManager();
             window.cartPanelManager.init();
         }
     }, 1000);
 });
-// Nuevas interacciones para las mejoras
-class EnhancedInteractions {
-    constructor() {
-        this.init();
-    }
 
-    init() {
-        this.initProductHover();
-        this.initQuickView();
-        this.initFormEnhancements();
-        this.initScrollAnimations();
-    }
-
-    initProductHover() {
-        // Efectos hover mejorados para productos
-        document.addEventListener('DOMContentLoaded', () => {
-            const productCards = document.querySelectorAll('.enhanced-card');
-            
-            productCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-8px)';
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'translateY(0)';
-                });
-            });
-        });
-    }
-
-    initQuickView() {
-        // Quick view para productos (para futura implementación)
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.btn-quick-view')) {
-                const productId = e.target.closest('.btn-quick-view').dataset.productId;
-                MasivoTechUtils.showToast('Vista rápida próximamente', 'info');
-            }
-        });
-    }
-
-    initFormEnhancements() {
-        // Mejoras visuales para formularios
-        const formInputs = document.querySelectorAll('.enhanced-form .form-control');
-        
-        formInputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', function() {
-                if (!this.value) {
-                    this.parentElement.classList.remove('focused');
-                }
-            });
-        });
-    }
-
-    initScrollAnimations() {
-        // Animaciones al hacer scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observar elementos para animar
-        document.querySelectorAll('.enhanced-card, .stat-item, .contact-info-item').forEach(el => {
-            observer.observe(el);
-        });
-    }
-}
-
-// Inicializar mejoras
-document.addEventListener('DOMContentLoaded', () => {
-    window.enhancedInteractions = new EnhancedInteractions();
-});
 // Mejoras para las nuevas tarjetas de productos
 class EnhancedProductCards {
     constructor() {
@@ -358,17 +241,9 @@ class EnhancedProductCards {
         document.addEventListener('click', (e) => {
             if (e.target.closest('.btn-quick-view')) {
                 const productId = e.target.closest('.btn-quick-view').dataset.productId;
-                this.showQuickView(productId);
+                MasivoTechUtils.showToast('Vista rápida próximamente', 'info');
             }
         });
-    }
-
-    showQuickView(productId) {
-        // Para futura implementación - modal de vista rápida
-        MasivoTechUtils.showToast('Vista rápida próximamente', 'info');
-        
-        // Por ahora, redirigir a la página de detalle
-        // window.location.href = `/producto/${productId}/`;
     }
 
     initProductHover() {

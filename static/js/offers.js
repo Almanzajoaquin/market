@@ -11,9 +11,7 @@ class OffersManager {
     }
 
     init() {
-        console.log('🔥 Inicializando OffersManager...');
         this.bindOfferEvents();
-        console.log('✅ OffersManager inicializado');
     }
 
     /**
@@ -35,8 +33,6 @@ class OffersManager {
                 card.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
             });
         });
-
-        console.log(`🔥 Vinculadas ${offerCards.length} tarjetas de oferta`);
     }
 
     /**

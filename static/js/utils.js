@@ -150,8 +150,6 @@ class MasivoTechUtils {
      * Maneja errores de API de forma consistente
      */
     static handleApiError(error, context = '') {
-        console.error(`Error en ${context}:`, error);
-        
         let userMessage = 'Ocurrió un error inesperado. Por favor, intenta nuevamente.';
         
         if (error.message.includes('NetworkError')) {

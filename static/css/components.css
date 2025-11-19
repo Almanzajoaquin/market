@@ -121,13 +121,14 @@
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    background: #ffffff; /* Mantener fondo blanco */
 }
 
 .dropdown-item {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: #000000;
+    color: #000000; /* Texto negro por defecto */
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
@@ -145,16 +146,23 @@
     border-bottom: none;
 }
 
+/* 🔥 CORRECCIÓN: Hover con fondo negro y texto blanco */
 .dropdown-item:hover {
-    background: #000000;
-    color: #ffffff;
+    background: #000000 !important; /* Fondo negro en hover */
+    color: #ffffff !important; /* Texto blanco en hover */
     text-decoration: none;
+}
+
+.dropdown-item:hover i {
+    color: #ffffff !important; /* Íconos blancos en hover */
 }
 
 .dropdown-item i {
     width: 16px;
     text-align: center;
     margin-right: 10px;
+    color: #666666; /* Color gris para íconos por defecto */
+    transition: color 0.2s ease;
 }
 
 .dropdown-divider {
@@ -163,7 +171,6 @@
     margin: 0;
     border: none;
 }
-
 /* =============================================================================
    DROPDOWN DE USUARIO
    ============================================================================= */

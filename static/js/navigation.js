@@ -23,8 +23,6 @@ class NavigationManager {
     }
 
     init() {
-        console.log('🧭 Inicializando NavigationManager...');
-        
         this.bindMobileMenuEvents();
         this.bindCartPanelEvents();
         this.bindMobileDropdownEvents();
@@ -34,8 +32,6 @@ class NavigationManager {
         this.bindLogoutModal();
         this.bindOverlayEvents();
         this.bindEscapeKey();
-        
-        console.log('✅ NavigationManager inicializado');
     }
 
     /**
@@ -48,14 +44,12 @@ class NavigationManager {
 
         if (toggle && panel) {
             toggle.addEventListener('click', () => {
-                console.log('📱 Abriendo menú móvil');
                 this.openPanel(panel);
             });
         }
 
         if (closeBtn && panel) {
             closeBtn.addEventListener('click', () => {
-                console.log('📱 Cerrando menú móvil');
                 this.closePanel(panel);
             });
         }
@@ -72,14 +66,12 @@ class NavigationManager {
         if (toggle && panel) {
             toggle.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('🛒 Abriendo carrito');
                 this.openPanel(panel);
             });
         }
 
         if (closeBtn && panel) {
             closeBtn.addEventListener('click', () => {
-                console.log('🛒 Cerrando carrito');
                 this.closePanel(panel);
             });
         }
@@ -91,15 +83,12 @@ class NavigationManager {
     bindMobileDropdownEvents() {
         const dropdownToggles = document.querySelectorAll(this.selectors.mobileDropdownToggle);
         
-        console.log('📱 Encontrados', dropdownToggles.length, 'dropdown toggles en mobile');
-        
         dropdownToggles.forEach(toggle => {
             toggle.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 
                 const dropdown = toggle.nextElementSibling;
-                console.log('📱 Toggle dropdown móvil:', toggle.textContent.trim());
                 
                 if (dropdown && dropdown.classList.contains('mobile-dropdown-menu')) {
                     // Cerrar otros dropdowns
@@ -142,7 +131,6 @@ class NavigationManager {
                 // Hover para abrir
                 item.addEventListener('mouseenter', () => {
                     if (window.innerWidth > 991) {
-                        console.log('🖱️ Mouse sobre dropdown de productos');
                         dropdownMenu.style.opacity = '1';
                         dropdownMenu.style.visibility = 'visible';
                         dropdownMenu.style.transform = 'translateY(0)';
@@ -162,7 +150,7 @@ class NavigationManager {
     }
 
     /**
-     * Maneja el dropdown del usuario - VERSIÓN CORREGIDA
+     * Maneja el dropdown del usuario
      */
     bindUserDropdownEvents() {
         const userDropdowns = document.querySelectorAll(this.selectors.userDropdown);
@@ -176,7 +164,6 @@ class NavigationManager {
                 toggle.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('👤 Toggle dropdown usuario');
                     
                     // Cerrar otros dropdowns de usuario
                     document.querySelectorAll('.user-dropdown-menu').forEach(otherMenu => {
@@ -201,7 +188,7 @@ class NavigationManager {
             }
         });
 
-        // Cerrar dropdown al hacer click fuera - VERSIÓN MEJORADA
+        // Cerrar dropdown al hacer click fuera
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.user-dropdown')) {
                 document.querySelectorAll('.user-dropdown-menu').forEach(menu => {
@@ -225,7 +212,7 @@ class NavigationManager {
     }
 
     /**
-     * Maneja la búsqueda - Versión mejorada
+     * Maneja la búsqueda
      */
     bindSearchEvents() {
         const searchToggle = document.querySelector(this.selectors.searchToggle);
@@ -233,16 +220,13 @@ class NavigationManager {
         if (searchToggle) {
             searchToggle.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('🔍 Abriendo búsqueda avanzada');
-                
-                // Crear modal de búsqueda
                 this.createSearchModal();
             });
         }
     }
 
     /**
-     * Crea un modal de búsqueda elegante y minimalista
+     * Crea un modal de búsqueda elegante
      */
     createSearchModal() {
         // Crear overlay
@@ -327,63 +311,58 @@ class NavigationManager {
     }
 
     /**
-     * Maneja el modal de cerrar sesión - VERSIÓN COMPLETA
+     * Maneja el modal de cerrar sesión
      */
-    
-    /**
- * Maneja el modal de cerrar sesión - VERSIÓN MEJORADA PARA MOBILE
- */
-bindLogoutModal() {
-    // Encontrar todos los enlaces de cerrar sesión (desktop y mobile)
-    const logoutLinks = document.querySelectorAll('a[data-bs-target="#logoutModal"], .mobile-dropdown-item[data-bs-target="#logoutModal"]');
-    
-    logoutLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🚪 Abriendo modal de cerrar sesión');
-            
-            // Cerrar el panel móvil si está abierto
-            this.closeAllPanels();
-            
-            this.showLogoutModal();
+    bindLogoutModal() {
+        const logoutLinks = document.querySelectorAll('a[data-bs-target="#logoutModal"], .mobile-dropdown-item[data-bs-target="#logoutModal"]');
+        
+        logoutLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Cerrar el panel móvil si está abierto
+                this.closeAllPanels();
+                
+                this.showLogoutModal();
+            });
         });
-    });
-    
-    // Manejar el modal
-    const logoutModal = document.getElementById('logoutModal');
-    if (logoutModal) {
-        // Botón cerrar
-        const closeBtn = logoutModal.querySelector('.btn-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                this.hideLogoutModal();
+        
+        // Manejar el modal
+        const logoutModal = document.getElementById('logoutModal');
+        if (logoutModal) {
+            // Botón cerrar
+            const closeBtn = logoutModal.querySelector('.btn-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    this.hideLogoutModal();
+                });
+            }
+            
+            // Botón cancelar
+            const cancelBtn = logoutModal.querySelector('.cancel-btn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    this.hideLogoutModal();
+                });
+            }
+            
+            // Cerrar modal al hacer click fuera
+            logoutModal.addEventListener('click', (e) => {
+                if (e.target === logoutModal) {
+                    this.hideLogoutModal();
+                }
             });
         }
         
-        // Botón cancelar
-        const cancelBtn = logoutModal.querySelector('.cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                this.hideLogoutModal();
-            });
-        }
-        
-        // Cerrar modal al hacer click fuera
-        logoutModal.addEventListener('click', (e) => {
-            if (e.target === logoutModal) {
+        // Cerrar con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
                 this.hideLogoutModal();
             }
         });
     }
-    
-    // Cerrar con Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            this.hideLogoutModal();
-        }
-    });
-}
+
     /**
      * Muestra el modal de cerrar sesión
      */
@@ -399,8 +378,6 @@ bindLogoutModal() {
             modal.classList.add('show');
             document.body.appendChild(overlay);
             document.body.style.overflow = 'hidden';
-            
-            console.log('✅ Modal de logout mostrado');
         }
     }
 
@@ -421,8 +398,6 @@ bindLogoutModal() {
         }
         
         document.body.style.overflow = '';
-        
-        console.log('✅ Modal de logout ocultado');
     }
 
     /**
@@ -433,7 +408,6 @@ bindLogoutModal() {
         
         if (overlay) {
             overlay.addEventListener('click', () => {
-                console.log('🎭 Cerrando paneles por overlay');
                 this.closeAllPanels();
             });
         }
@@ -445,7 +419,6 @@ bindLogoutModal() {
     bindEscapeKey() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                console.log('⌨️ Cerrando paneles con Escape');
                 this.closeAllPanels();
                 this.hideLogoutModal();
             }
@@ -462,8 +435,6 @@ bindLogoutModal() {
             panel.classList.add('active');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            console.log(`✅ Panel abierto: ${panel.id}`);
         }
     }
 
@@ -477,8 +448,6 @@ bindLogoutModal() {
             panel.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
-            
-            console.log(`✅ Panel cerrado: ${panel.id}`);
         }
     }
 
@@ -516,8 +485,6 @@ bindLogoutModal() {
             menu.style.visibility = 'hidden';
             menu.style.transform = 'translateY(-10px)';
         });
-        
-        console.log('✅ Todos los paneles cerrados');
     }
 
     /**
@@ -533,8 +500,6 @@ bindLogoutModal() {
             setTimeout(() => {
                 badge.style.transform = 'scale(1)';
             }, 300);
-            
-            console.log(`🛒 Badge actualizado: ${count} items`);
         }
     }
 }

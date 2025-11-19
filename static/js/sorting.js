@@ -12,9 +12,7 @@ class SortingManager {
     }
 
     init() {
-        console.log('🔄 Inicializando SortingManager...');
         this.bindSortingEvents();
-        console.log('✅ SortingManager inicializado');
     }
 
     /**
@@ -27,7 +25,6 @@ class SortingManager {
         if (sortSelect) {
             sortSelect.addEventListener('change', (e) => {
                 const sortValue = e.target.value;
-                console.log(`🔄 Aplicando ordenamiento: ${sortValue}`);
                 this.applySorting(sortValue);
             });
         }
