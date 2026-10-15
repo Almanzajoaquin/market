@@ -91,7 +91,6 @@ MERCADOPAGO_ACCESS_TOKEN=tu_access_token
     python manage.py runserver
 -------------------------------------------------bash
 ```
-La aplicación estará disponible en: http://127.0.0.1:8000
 
  Tecnologías
 <div align="center">
